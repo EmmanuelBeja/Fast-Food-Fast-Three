@@ -6,9 +6,8 @@ from .create_table import queries
 
 def dbcon():
     """db connection"""
-    #url = os.getenv("dbname=fastfoodfasttests user=emmanuelbeja password=#1Emmcodes host=localhost")
-    url = os.getenv('DATABASE_URL')
-    return psycopg2.connect(url)
+    #url = os.getenv('DATABASE_URL')
+    return psycopg2.connect('dbname=FastFoodFastAPI user=emmanuelbeja password=#1Emmcodes host=localhost')
 
 def init_db():
     try:
