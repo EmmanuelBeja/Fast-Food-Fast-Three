@@ -284,6 +284,7 @@ class Order(object):
 
 
     def get_user_orders(self, client_id):
+        """ get User orders """
         result = []
         if self.is_loggedin() is True:
             if len(self.order_list) > 0:
