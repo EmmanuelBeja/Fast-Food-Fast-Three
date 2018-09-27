@@ -11,7 +11,6 @@ class TestFood(unittest.TestCase):
     """ Tests for the Orders """
     def setUp(self):
         # pass in test configurations
-        #config_name = os.getenv('APP_SETTINGS', 'testing')
         app = create_app(config_name='testing')
         self.create_food = json.dumps(dict(
                 food_name="mchele",
@@ -64,7 +63,7 @@ class TestFood(unittest.TestCase):
         data = json.loads(resource.data.decode())
         self.assertEqual(resource.status_code, 201)
         self.assertEqual(resource.content_type, 'application/json')
-        self.assertEqual(data['message'].strip(), 'Successful')
+        self.assertEqual(data['message'].strip(), 'Successful.')
 
     def test_get_all_foods(self):
         """ Test for getting all foods """
@@ -96,7 +95,7 @@ class TestFood(unittest.TestCase):
         data = json.loads(resource.data.decode())
         self.assertEqual(resource.status_code, 201)
         self.assertEqual(resource.content_type, 'application/json')
-        self.assertEqual(data['message'].strip(), 'Successful')
+        self.assertEqual(data['message'].strip(), 'Update Successful.')
 
     def test_food_deletion(self):
         """Test API can delete an existing order. (DELETE request)."""
