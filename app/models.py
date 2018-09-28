@@ -167,6 +167,33 @@ class Order(object):
         self.conn = dbcon()
         self.cur = self.conn.cursor()
 
+    def get_orders(self):
+        """ get all Orders """
+        orderlist = {}
+        result = []
+        if self.is_loggedin() is True:
+            if self.is_admin() is True:
+                self.cur.execute("SELECT * FROM tbl_orders")
+                numrows = self.cur.rowcount
+                if numrows > 0:
+                    rows = self.cur.fetchall()
+                    for order in rows:
+                        orderlist.update({
+                            'order_id': order[0],
+                            'food_id': order[1],
+                            'client_id': order[2],
+                            'client_adress': order[3]})
+                        result.append(dict(orderlist))
+                    return jsonify({
+                        "message": "Successful.",
+                        "Orders": result}), 200
+                return jsonify({
+                    "message": "No Order."}), 400
+            return jsonify({
+                "message": "You dont have admin priviledges."}), 401
+        return jsonify({
+            "message": "Please login first."}), 401
+            
     def get_user_orders(self, client_id):
         orderlist = {}
         result = []
@@ -225,7 +252,7 @@ class Order(object):
             return jsonify({
                 "message": "You dont have admin priviledges."}), 401
         return jsonify({
-            "message": "Please login first."}), 401        
+            "message": "Please login first."}), 401
 
     def delete_order(self, order_id):
         """ delete Order """
