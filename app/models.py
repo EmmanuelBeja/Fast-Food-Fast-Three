@@ -185,7 +185,7 @@ class Order(object):
                     'client_adress': order[3]})
             return jsonify({"message": "Successful", "Order": orderlist}), 201
         return jsonify({
-            "message": "Please login first."}), 401    
+            "message": "Please login first."}), 401
 
     def get_orders(self):
         """ get all Orders """
@@ -332,3 +332,43 @@ class Order(object):
             if session['userrole'] == 'admin':
                 return True
         return False
+
+class Food(object):
+    def __init__(self):
+        """ Initialize empty Order list"""
+        self.conn = dbcon()
+        self.cur = self.conn.cursor()
+
+    def create_food(self, food_name, food_price, food_image):
+        """Create food_item"""
+        foodlist = {}
+        if self.is_loggedin() is True:
+            if self.is_admin() is True:
+                self.cur.execute("INSERT INTO  tbl_foods(food_name, food_price, food_image) VALUES(%(food_name)s, %(food_price)s, %(food_image)s);",{
+                'food_name': food_name, 'food_price': food_price, 'food_image': food_image})
+                self.conn.commit()
+                self.cur.execute("""SELECT * from tbl_foods""")
+                rows = self.cur.fetchall()
+                for food in rows:
+                    foodlist.update({
+                        'food_id': food[0],
+                        'food_name': food[1],
+                        'food_price': food[2],
+                        'food_image': food[3]})
+                return jsonify({"message": "Successful", "Food": foodlist}), 201
+            return jsonify({
+                "message": "You dont have admin priviledges."}), 401
+        return jsonify({
+            "message": "Please login first."}), 401
+
+    def is_loggedin(self):
+        if 'username' in session:
+            if session['username']:
+                return True
+        return False
+
+    def is_admin(self):
+        if 'userrole' in session:
+            if session['userrole'] == 'admin':
+                return True
+        return False        
