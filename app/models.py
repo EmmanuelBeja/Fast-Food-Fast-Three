@@ -159,7 +159,7 @@ def create_user(self, username, userphone, password, userRole):
             return False
         else:
             return True
-            
+
 
 class Order(object):
     def __init__(self):
@@ -192,6 +192,40 @@ class Order(object):
                 "message": "You dont have admin priviledges."}), 401
         return jsonify({
             "message": "Please login first."}), 401
+
+    def update_order(
+            self,
+            order_id,
+            food_id,
+            client_id,
+            client_adress,
+            status):
+        """ update Order """
+        if self.is_loggedin() is True:
+            if self.is_admin() is True:
+                orderlist = {}
+                self.cur.execute("SELECT * FROM tbl_orders WHERE order_id=%(order_id)s", {'order_id': order_id})
+                numrows = self.cur.rowcount
+                rows = self.cur.fetchall()
+                if numrows > 0:
+                    #update this order details
+                    self.cur.execute("UPDATE tbl_orders SET food_id=%s, client_id=%s, client_adress=%s, status=%s WHERE order_id=%s", (food_id, client_id, client_adress, status, order_id))
+                    self.conn.commit()
+
+                    for order in rows:
+                        orderlist.update({
+                            'order_id': order[0],
+                            'food_id': order[1],
+                            'client_id': order[2],
+                            'client_adress': order[3]})
+                        return jsonify({
+                            "message": "Successful",
+                            "Order": orderlist}), 201
+                return jsonify({"message": "No Order."}), 400
+            return jsonify({
+                "message": "You dont have admin priviledges."}), 401
+        return jsonify({
+            "message": "Please login first."}), 401        
 
     def delete_order(self, order_id):
         """ delete Order """
