@@ -361,6 +361,27 @@ class Food(object):
         return jsonify({
             "message": "Please login first."}), 401
 
+    def get_foods(self):
+        """ get all Foods """
+        foodlist = {}
+        result = []
+        self.cur.execute("SELECT * FROM tbl_foods")
+        numrows = self.cur.rowcount
+        if numrows > 0:
+            rows = self.cur.fetchall()
+            for food in rows:
+                foodlist.update({
+                    'food_id': food[0],
+                    'food_name': food[1],
+                    'food_price': food[2],
+                    'food_image': food[3]})
+                result.append(dict(foodlist))
+            return jsonify({
+                "message": "Successful.",
+                "Foods": result}), 200
+        return jsonify({
+            "message": "No Food."}), 400        
+
     def is_loggedin(self):
         if 'username' in session:
             if session['username']:
@@ -371,4 +392,4 @@ class Food(object):
         if 'userrole' in session:
             if session['userrole'] == 'admin':
                 return True
-        return False        
+        return False
