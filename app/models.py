@@ -37,6 +37,25 @@ class Order(object):
         return jsonify({
             "message": "Please login first."}), 401
 
+    def delete_order(self, order_id):
+        """ delete Order """
+        if self.is_loggedin() is True:
+            if self.is_admin() is True:
+
+                self.cur.execute("SELECT * FROM tbl_orders WHERE order_id=%(order_id)s", {'order_id': order_id})
+                numrows = self.cur.rowcount
+                if numrows > 0:
+                    #delete this order details
+                    self.cur.execute("DELETE FROM tbl_orders WHERE order_id=%(order_id)s", {'order_id': order_id})
+                    self.conn.commit()
+                    return jsonify({
+                        "message": "Delete Successful."}), 201
+                return jsonify({"message": "No Order."}), 400
+            return jsonify({
+                "message": "You dont have admin priviledges."}), 401
+        return jsonify({
+            "message": "Please login first."}), 401        
+
     def is_loggedin(self):
         if 'username' in session:
             if session['username']:
