@@ -11,6 +11,8 @@ class TestOrders(unittest.TestCase):
     """ Tests for the Orders """
     def setUp(self):
         # pass in test configurations
+        #config_name = os.getenv('APP_SETTINGS', 'testing')
+        #DATABASE_URL="dbname=fastfoodfasttests user=emmanuelbeja password=#1Emmcodes host=localhost"
         app = create_app(config_name='testing')
         self.client = app.test_client()
 
@@ -56,7 +58,7 @@ class TestOrders(unittest.TestCase):
         data = json.loads(resource.data.decode())
         self.assertEqual(resource.status_code, 201)
         self.assertEqual(resource.content_type, 'application/json')
-        self.assertEqual(data['message'].strip(), 'Successful.')
+        self.assertEqual(data['message'].strip(), 'Successful')
 
     def test_get_all_orders(self):
         """ Test for getting all orders """
@@ -85,7 +87,7 @@ class TestOrders(unittest.TestCase):
         data = json.loads(resource.data.decode())
         self.assertEqual(resource.status_code, 201)
         self.assertEqual(resource.content_type, 'application/json')
-        self.assertEqual(data['message'].strip(), 'Update Successful.')
+        self.assertEqual(data['message'].strip(), 'Successful')
 
     def test_order_deletion(self):
         """Test API can delete an existing order. (DELETE request)."""
