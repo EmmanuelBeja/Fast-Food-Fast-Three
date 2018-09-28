@@ -410,7 +410,26 @@ class Food(object):
             return jsonify({
                 "message": "You dont have admin priviledges."}), 401
         return jsonify({
-            "message": "Please login first."}), 401        
+            "message": "Please login first."}), 401
+
+    def get_food(self, food_id):
+        """ get Food """
+        foodlist = {}
+        self.cur.execute("SELECT * FROM tbl_foods WHERE food_id=%(food_id)s", {'food_id': food_id})
+        numrows = self.cur.rowcount
+        if numrows > 0:
+            rows = self.cur.fetchall()
+            for food in rows:
+                foodlist.update({
+                    'food_id': food[0],
+                    'food_name': food[1],
+                    'food_price': food[2],
+                    'food_image': food[3]})
+            return jsonify({
+                "message": "Successful.",
+                "Foods": foodlist}), 200
+        return jsonify({
+            "message": "No Food."}), 400        
 
     def is_loggedin(self):
         if 'username' in session:
