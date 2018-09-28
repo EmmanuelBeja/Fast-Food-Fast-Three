@@ -380,7 +380,37 @@ class Food(object):
                 "message": "Successful.",
                 "Foods": result}), 200
         return jsonify({
-            "message": "No Food."}), 400        
+            "message": "No Food."}), 400
+
+    def update_food(self, food_id, food_name, food_price, food_image):
+        """ update Food """
+        if self.is_loggedin() is True:
+            if self.is_admin() is True:
+
+                foodlist = {}
+                self.cur.execute("SELECT * FROM tbl_foods WHERE food_id=%(food_id)s", {'food_id': food_id})
+                numrows = self.cur.rowcount
+                rows = self.cur.fetchall()
+                if numrows > 0:
+                    #update this order details
+                    self.cur.execute("UPDATE tbl_foods SET food_name=%s, food_price=%s, food_image=%s WHERE food_id=%s", (food_name, food_price, food_image, food_id))
+                    self.conn.commit()
+
+                    for food in rows:
+                        foodlist.update({
+                            'food_id': food[0],
+                            'food_name': food[1],
+                            'food_price': food[2],
+                            'food_image': food[3]})
+                        return jsonify({
+                            "message": "Successful",
+                            "Food": foodlist}), 201
+                return jsonify({"message": "No Food."}), 400
+
+            return jsonify({
+                "message": "You dont have admin priviledges."}), 401
+        return jsonify({
+            "message": "Please login first."}), 401        
 
     def is_loggedin(self):
         if 'username' in session:
