@@ -16,12 +16,12 @@ def create_app(config_name):
     init_db()
 
     from .v1.food import food_api as api_blueprint
-    app.register_blueprint(api_blueprint, url_prefix='/v1')
+    app.register_blueprint(api_blueprint, url_prefix='/v2')
 
     from .v1.orders import orders_api as api_blueprint
-    app.register_blueprint(api_blueprint, url_prefix='/v1')
+    app.register_blueprint(api_blueprint, url_prefix='/v2')
 
     from .v1.users import users_api as api_blueprint
-    app.register_blueprint(api_blueprint, url_prefix='/v1')
+    app.register_blueprint(api_blueprint, url_prefix='/v3')
 
     return app
