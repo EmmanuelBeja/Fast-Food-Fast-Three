@@ -429,7 +429,25 @@ class Food(object):
                 "message": "Successful.",
                 "Foods": foodlist}), 200
         return jsonify({
-            "message": "No Food."}), 400        
+            "message": "No Food."}), 400
+
+    def delete_food(self, food_id):
+        """ delete Food """
+        if self.is_loggedin() is True:
+            if self.is_admin() is True:
+                self.cur.execute("SELECT * FROM tbl_foods WHERE food_id=%(food_id)s", {'food_id': food_id})
+                numrows = self.cur.rowcount
+                if numrows > 0:
+                    #delete this food details
+                    self.cur.execute("DELETE FROM tbl_foods WHERE food_id=%(food_id)s", {'food_id': food_id})
+                    self.conn.commit()
+                    return jsonify({
+                        "message": "Delete Successful."}), 201
+                return jsonify({"message": "No Food."}), 400
+            return jsonify({
+                "message": "You dont have admin priviledges."}), 401
+        return jsonify({
+            "message": "Please login first."}), 401        
 
     def is_loggedin(self):
         if 'username' in session:
