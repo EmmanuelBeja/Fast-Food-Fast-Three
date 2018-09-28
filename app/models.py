@@ -167,6 +167,26 @@ class Order(object):
         self.conn = dbcon()
         self.cur = self.conn.cursor()
 
+    def create_order(self, food_id, client_id, client_adress, status):
+        """Create order_item"""
+        orderlist = {}
+        if self.is_loggedin() is True:
+            self.cur.execute("INSERT INTO  tbl_orders(food_id, client_id, client_adress, status) VALUES(%(food_id)s, %(client_id)s, %(client_adress)s, %(status)s);",{
+            'food_id': food_id, 'client_id': client_id, 'client_adress': client_adress, 'status': status})
+            self.conn.commit()
+
+            self.cur.execute("""SELECT * from tbl_orders""")
+            rows = self.cur.fetchall()
+            for order in rows:
+                orderlist.update({
+                    'order_id': order[0],
+                    'food_id': order[1],
+                    'client_id': order[2],
+                    'client_adress': order[3]})
+            return jsonify({"message": "Successful", "Order": orderlist}), 201
+        return jsonify({
+            "message": "Please login first."}), 401
+
     def get_orders(self):
         """ get all Orders """
         orderlist = {}
@@ -193,7 +213,35 @@ class Order(object):
                 "message": "You dont have admin priviledges."}), 401
         return jsonify({
             "message": "Please login first."}), 401
-            
+
+    def get_order(self, order_id):
+        """ get Order """
+        orderlist = {}
+        result = []
+        if self.is_loggedin() is True:
+            if self.is_admin() is True:
+
+                self.cur.execute("SELECT * FROM tbl_orders WHERE order_id=%(order_id)s", {'order_id': order_id})
+                numrows = self.cur.rowcount
+                if numrows > 0:
+                    rows = self.cur.fetchall()
+                    for order in rows:
+                        orderlist.update({
+                            'order_id': order[0],
+                            'food_id': order[1],
+                            'client_id': order[2],
+                            'client_adress': order[3]})
+                        result.append(dict(orderlist))
+                    return jsonify({
+                        "message": "Successful.",
+                        "Orders": result}), 200
+                return jsonify({
+                    "message": "No Order."}), 400
+            return jsonify({
+                "message": "You dont have admin priviledges."}), 401
+        return jsonify({
+            "message": "Please login first."}), 401
+
     def get_user_orders(self, client_id):
         orderlist = {}
         result = []
@@ -284,3 +332,43 @@ class Order(object):
             if session['userrole'] == 'admin':
                 return True
         return False
+
+class Food(object):
+    def __init__(self):
+        """ Initialize empty Order list"""
+        self.conn = dbcon()
+        self.cur = self.conn.cursor()
+
+    def create_food(self, food_name, food_price, food_image):
+        """Create food_item"""
+        foodlist = {}
+        if self.is_loggedin() is True:
+            if self.is_admin() is True:
+                self.cur.execute("INSERT INTO  tbl_foods(food_name, food_price, food_image) VALUES(%(food_name)s, %(food_price)s, %(food_image)s);",{
+                'food_name': food_name, 'food_price': food_price, 'food_image': food_image})
+                self.conn.commit()
+                self.cur.execute("""SELECT * from tbl_foods""")
+                rows = self.cur.fetchall()
+                for food in rows:
+                    foodlist.update({
+                        'food_id': food[0],
+                        'food_name': food[1],
+                        'food_price': food[2],
+                        'food_image': food[3]})
+                return jsonify({"message": "Successful", "Food": foodlist}), 201
+            return jsonify({
+                "message": "You dont have admin priviledges."}), 401
+        return jsonify({
+            "message": "Please login first."}), 401
+
+    def is_loggedin(self):
+        if 'username' in session:
+            if session['username']:
+                return True
+        return False
+
+    def is_admin(self):
+        if 'userrole' in session:
+            if session['userrole'] == 'admin':
+                return True
+        return False        
