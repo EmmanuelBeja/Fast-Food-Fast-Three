@@ -37,17 +37,12 @@ class TestOrders(unittest.TestCase):
         self.assertEqual(resource.content_type, 'application/json')
         self.assertEqual(data['message'].strip(), 'Successful')
 
-    def test_get_all_orders(self):
-        """ Test for getting all orders """
-        resource = self.client.get(
-            '/v2/orders/',
-            data=json.dumps(dict()),
-            content_type='application/json')
-
-        data = json.loads(resource.data.decode())
+    def test_get_user_order(self):
+        """ Test for getting specific orders """
+        resource = self.client.get('/v2/users/orders/1')
         self.assertEqual(resource.status_code, 200)
-        self.assertEqual(resource.content_type, 'application/json')
-        self.assertEqual(data['message'].strip(), 'Successful.')
+
+
 
 if __name__ == '__main__':
     unittest.main()

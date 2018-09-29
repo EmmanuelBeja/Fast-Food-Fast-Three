@@ -43,8 +43,9 @@ def order():
         return res
     return jsonify({"message": res}), 400
 
-@orders_api.route('/orders/', methods=["GET"])
-def allorder():
-    """ Get all orders"""
-    data = orderObject.get_orders()
-    return data
+
+@orders_api.route('/users/orders/<int:client_id>', methods=['GET'])
+def userorders(client_id, **kwargs):
+    """ Get the order history for a particular user."""
+    res = orderObject.get_user_orders(client_id)
+    return res

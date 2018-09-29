@@ -28,11 +28,10 @@ class Order(object):
                 'client_adress': order[3]})
         return jsonify({"message": "Successful", "Order": orderlist}), 201
 
-    def get_orders(self):
-        """ get all Orders """
+    def get_user_orders(self, client_id):
         orderlist = {}
         result = []
-        self.cur.execute("SELECT * FROM tbl_orders")
+        self.cur.execute("SELECT * FROM tbl_orders WHERE client_id=%(client_id)s", {'client_id': client_id})
         numrows = self.cur.rowcount
         if numrows > 0:
             rows = self.cur.fetchall()
