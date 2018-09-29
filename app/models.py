@@ -11,40 +11,40 @@ class Order(object):
         self.conn = dbcon()
         self.cur = self.conn.cursor()
 
-    def get_user_orders(self, client_id):
+    def create_order(self, food_id, client_id, client_adress, status):
+        """Create order_item"""
+        orderlist = {}
+        self.cur.execute("INSERT INTO  tbl_orders(food_id, client_id, client_adress, status) VALUES(%(food_id)s, %(client_id)s, %(client_adress)s, %(status)s);",{
+        'food_id': food_id, 'client_id': client_id, 'client_adress': client_adress, 'status': status})
+        self.conn.commit()
+
+        self.cur.execute("""SELECT * from tbl_orders""")
+        rows = self.cur.fetchall()
+        for order in rows:
+            orderlist.update({
+                'order_id': order[0],
+                'food_id': order[1],
+                'client_id': order[2],
+                'client_adress': order[3]})
+        return jsonify({"message": "Successful", "Order": orderlist}), 201
+
+    def get_orders(self):
+        """ get all Orders """
         orderlist = {}
         result = []
-        if self.is_loggedin() is True:
-            if self.is_admin() is True:
-                self.cur.execute("SELECT * FROM tbl_orders WHERE client_id=%(client_id)s", {'client_id': client_id})
-                numrows = self.cur.rowcount
-                if numrows > 0:
-                    rows = self.cur.fetchall()
-                    for order in rows:
-                        orderlist.update({
-                            'order_id': order[0],
-                            'food_id': order[1],
-                            'client_id': order[2],
-                            'client_adress': order[3]})
-                        result.append(dict(orderlist))
-                    return jsonify({
-                        "message": "Successful.",
-                        "Orders": result}), 200
-                return jsonify({
-                    "message": "No Order."}), 400
+        self.cur.execute("SELECT * FROM tbl_orders")
+        numrows = self.cur.rowcount
+        if numrows > 0:
+            rows = self.cur.fetchall()
+            for order in rows:
+                orderlist.update({
+                    'order_id': order[0],
+                    'food_id': order[1],
+                    'client_id': order[2],
+                    'client_adress': order[3]})
+                result.append(dict(orderlist))
             return jsonify({
-                "message": "You dont have admin priviledges."}), 401
+                "message": "Successful.",
+                "Orders": result}), 200
         return jsonify({
-            "message": "Please login first."}), 401
-
-    def is_loggedin(self):
-        if 'username' in session:
-            if session['username']:
-                return True
-        return False
-
-    def is_admin(self):
-        if 'userrole' in session:
-            if session['userrole'] == 'admin':
-                return True
-        return False
+            "message": "No Order."}), 400
