@@ -4,7 +4,15 @@ import re
 from .database.conn import dbcon
 
 
-def create_user(self, username, userphone, password, userRole):
+class User(object):
+    """User Class"""
+    def __init__(self):
+        """ Initialize empty user list"""
+        self.conn = dbcon()
+        self.cur = self.conn.cursor()
+
+
+    def create_user(self, username, userphone, password, userRole):
         """Create users"""
         self.users = {}
         if not self.valid_username(username):
@@ -31,7 +39,7 @@ def create_user(self, username, userphone, password, userRole):
     def login(self, username, password):
         """login users"""
         if not self.valid_username(username):
-            return jsonify({"message": "Please register first."}), 400
+            return jsonify({"message": "Please register first."}), 401
         else:
             self.cur.execute("SELECT * FROM tbl_users WHERE username=%(username)s AND password=%(password)s", {'username': username, 'password': password})
             numrows = self.cur.rowcount
@@ -52,7 +60,7 @@ def create_user(self, username, userphone, password, userRole):
                         "message": "You are successfully logged in",
                         "user": userlistclone}), 200
             return jsonify({
-                "message": "Wrong username or password"}), 401
+                "message": "Wrong username or password"}), 403
 
 
     def get_specific_user(self, id):
@@ -167,6 +175,26 @@ class Order(object):
         self.conn = dbcon()
         self.cur = self.conn.cursor()
 
+    def create_order(self, food_id, client_id, client_adress, status):
+        """Create order_item"""
+        orderlist = {}
+        if self.is_loggedin() is True:
+            self.cur.execute("INSERT INTO  tbl_orders(food_id, client_id, client_adress, status) VALUES(%(food_id)s, %(client_id)s, %(client_adress)s, %(status)s);",{
+            'food_id': food_id, 'client_id': client_id, 'client_adress': client_adress, 'status': status})
+            self.conn.commit()
+
+            self.cur.execute("""SELECT * from tbl_orders""")
+            rows = self.cur.fetchall()
+            for order in rows:
+                orderlist.update({
+                    'order_id': order[0],
+                    'food_id': order[1],
+                    'client_id': order[2],
+                    'client_adress': order[3]})
+            return jsonify({"message": "Successful", "Order": orderlist}), 201
+        return jsonify({
+            "message": "Please login first."}), 401
+
     def get_orders(self):
         """ get all Orders """
         orderlist = {}
@@ -220,7 +248,7 @@ class Order(object):
             return jsonify({
                 "message": "You dont have admin priviledges."}), 401
         return jsonify({
-            "message": "Please login first."}), 401        
+            "message": "Please login first."}), 401
 
     def get_user_orders(self, client_id):
         orderlist = {}
