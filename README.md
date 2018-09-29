@@ -1,6 +1,6 @@
 # Fast-Food-Fast
-[![Build Status](https://travis-ci.org/EmmanuelBeja/Fast-Food-Fast-Three.svg?branch=ft-user-get-orders-160790470)](https://travis-ci.org/EmmanuelBeja/Fast-Food-Fast-Three)
-[![Coverage Status](https://coveralls.io/repos/github/EmmanuelBeja/Fast-Food-Fast-Three/badge.svg?branch=ft-user-get-orders-160790470)](https://coveralls.io/github/EmmanuelBeja/Fast-Food-Fast-Three?branch=ft-user-get-orders-160790470)
+[![Build Status](https://travis-ci.org/EmmanuelBeja/Fast-Food-Fast-Three.svg?branch=ft-order-history-160803843)](https://travis-ci.org/EmmanuelBeja/Fast-Food-Fast-Three)
+[![Coverage Status](https://coveralls.io/repos/github/EmmanuelBeja/Fast-Food-Fast-Three/badge.svg?branch=ft-order-history-160803843)](https://coveralls.io/github/EmmanuelBeja/Fast-Food-Fast-Three?branch=ft-order-history-160803843)
 [![Maintainability](https://api.codeclimate.com/v1/badges/303579a3adac4148d43b/maintainability)](https://codeclimate.com/github/EmmanuelBeja/Fast-Food-Fast-Three/maintainability)
 
   A platform where people get to order food added by the admin. The admin can then accept decline or complete the orders made.
