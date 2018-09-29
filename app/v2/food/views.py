@@ -44,12 +44,7 @@ def food():
 @food_api.route('/food/<int:food_id>', methods=['GET', 'PUT', 'DELETE'])
 def food_manipulation(food_id, **kwargs):
     """ GET/PUT/DEL food """
-    if request.method == 'DELETE':
-        # DELETE
-        res = foodObject.delete_food(food_id)
-        return res
-
-    elif request.method == 'PUT':
+    if request.method == 'PUT':
         # PUT
         data = request.get_json()
         food_name = data['food_name']

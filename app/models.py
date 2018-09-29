@@ -4,7 +4,14 @@ import re
 from .database.conn import dbcon
 
 
-def create_user(self, username, userphone, password, userRole):
+class User(object):
+    """User Class"""
+    def __init__(self):
+        """ Initialize empty user list"""
+        self.conn = dbcon()
+        self.cur = self.conn.cursor()
+
+    def create_user(self, username, userphone, password, userRole):
         """Create users"""
         self.users = {}
         if not self.valid_username(username):
@@ -31,7 +38,7 @@ def create_user(self, username, userphone, password, userRole):
     def login(self, username, password):
         """login users"""
         if not self.valid_username(username):
-            return jsonify({"message": "Please register first."}), 400
+            return jsonify({"message": "Please register first."}), 401
         else:
             self.cur.execute("SELECT * FROM tbl_users WHERE username=%(username)s AND password=%(password)s", {'username': username, 'password': password})
             numrows = self.cur.rowcount
@@ -52,7 +59,7 @@ def create_user(self, username, userphone, password, userRole):
                         "message": "You are successfully logged in",
                         "user": userlistclone}), 200
             return jsonify({
-                "message": "Wrong username or password"}), 401
+                "message": "Wrong username or password"}), 403
 
 
     def get_specific_user(self, id):
@@ -429,7 +436,7 @@ class Food(object):
                 "message": "Successful.",
                 "Foods": foodlist}), 200
         return jsonify({
-            "message": "No Food."}), 400        
+            "message": "No Food."}), 400
 
     def is_loggedin(self):
         if 'username' in session:

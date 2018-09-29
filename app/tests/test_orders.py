@@ -1,4 +1,4 @@
-"""app/tests_orders.py"""
+"""app/tests_food.py"""
 import unittest
 import os
 import json
@@ -7,52 +7,58 @@ from app import create_app, init_db
 from app.database.conn import dbcon
 
 
-class TestOrders(unittest.TestCase):
+class TestFood(unittest.TestCase):
     """ Tests for the Orders """
     def setUp(self):
         # pass in test configurations
         #config_name = os.getenv('APP_SETTINGS', 'testing')
-        #DATABASE_URL="dbname=fastfoodfasttests user=emmanuelbeja password=#1Emmcodes host=localhost"
         app = create_app(config_name='testing')
-        self.client = app.test_client()
+        self.create_food = json.dumps(dict(
+                food_name="mchele",
+                food_price=200,
+                food_image='mchele.jpg'))
+
+        self.create_food2 = json.dumps(dict(
+                food_name="pilau",
+                food_price=200,
+                food_image='pilau.jpg'))
 
         self.register_user = json.dumps(dict(
-            username="useer",
+            username="useeer",
             userphone='0712991415',
             password='Pass123',
             userRole='admin',
             confirmpass='Pass123'))
 
-        self.login = data=json.dumps(dict(username="useer", password='Pass123'))
+        self.login = data=json.dumps(dict(username="useeer", password='Pass123'))
 
-        self.create_order = json.dumps(dict(
-                food_id=1,
-                client_id=1,
-                client_adress='Likoni',
-                status='pending'))
+        self.client = app.test_client()
 
         self.signupuser = self.client.post(
-           '/v1/auth/signup',
+           '/v2/auth/signup',
            data=self.register_user,
            content_type='application/json')
 
         self.client.post(
-           '/v1/auth/login',
+           '/v2/auth/login',
            data=self.login,
            content_type='application/json')
 
         self.client.post(
-            '/v1/users/orders',
-            data=self.create_order,
+            '/v2/menu',
+            data=self.create_food,
             content_type='application/json')
 
+        self.client.post(
+            '/v2/menu',
+            data=self.create_food2,
+            content_type='application/json')
 
-    def test_order_creation(self):
-        """ Test for order creation """
-
+    def test_food_creation(self):
+        """ Test for food creation """
         resource = self.client.post(
-                '/v1/users/orders',
-                data=self.create_order,
+                '/v2/menu',
+                data=self.create_food,
                 content_type='application/json')
 
         data = json.loads(resource.data.decode())
@@ -60,10 +66,10 @@ class TestOrders(unittest.TestCase):
         self.assertEqual(resource.content_type, 'application/json')
         self.assertEqual(data['message'].strip(), 'Successful')
 
-    def test_get_all_orders(self):
-        """ Test for getting all orders """
+    def test_get_all_foods(self):
+        """ Test for getting all foods """
         resource = self.client.get(
-            '/v1/orders/',
+            '/v2/menu',
             data=json.dumps(dict()),
             content_type='application/json')
 
@@ -72,16 +78,19 @@ class TestOrders(unittest.TestCase):
         self.assertEqual(resource.content_type, 'application/json')
         self.assertEqual(data['message'].strip(), 'Successful.')
 
-    def test_get_order_by_order_id(self):
-        """ Test for getting specific orders """
-        resource = self.client.get('/v1/orders/1')
+    def test_get_food_by_food_id(self):
+        """ Test for getting specific foods """
+        resource = self.client.get('/v2/food/2')
+        data = json.loads(resource.data.decode())
         self.assertEqual(resource.status_code, 200)
+        self.assertEqual(resource.content_type, 'application/json')
+        self.assertEqual(data['message'].strip(), 'Successful.')
 
-    def test_order_can_be_edited(self):
-        """ test order can be edited """
+    def test_food_can_be_edited(self):
+        """ test food can be edited """
         resource = self.client.put(
-                '/v1/orders/1',
-                data=self.create_order,
+                '/v2/food/2',
+                data=self.create_food,
                 content_type='application/json')
 
         data = json.loads(resource.data.decode())
@@ -89,9 +98,9 @@ class TestOrders(unittest.TestCase):
         self.assertEqual(resource.content_type, 'application/json')
         self.assertEqual(data['message'].strip(), 'Successful')
 
-    def test_order_deletion(self):
+    def test_food_deletion(self):
         """Test API can delete an existing order. (DELETE request)."""
-        res = self.client.delete('/v1/orders/1')
+        res = self.client.delete('/v2/food/1')
         self.assertEqual(res.status_code, 201)
 
     def tearDown(self):
