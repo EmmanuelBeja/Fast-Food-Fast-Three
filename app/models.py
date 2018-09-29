@@ -4,7 +4,15 @@ import re
 from .database.conn import dbcon
 
 
-def create_user(self, username, userphone, password, userRole):
+class User(object):
+    """User Class"""
+    def __init__(self):
+        """ Initialize empty user list"""
+        self.conn = dbcon()
+        self.cur = self.conn.cursor()
+
+
+    def create_user(self, username, userphone, password, userRole):
         """Create users"""
         self.users = {}
         if not self.valid_username(username):
@@ -31,7 +39,7 @@ def create_user(self, username, userphone, password, userRole):
     def login(self, username, password):
         """login users"""
         if not self.valid_username(username):
-            return jsonify({"message": "Please register first."}), 400
+            return jsonify({"message": "Please register first."}), 401
         else:
             self.cur.execute("SELECT * FROM tbl_users WHERE username=%(username)s AND password=%(password)s", {'username': username, 'password': password})
             numrows = self.cur.rowcount
@@ -52,7 +60,7 @@ def create_user(self, username, userphone, password, userRole):
                         "message": "You are successfully logged in",
                         "user": userlistclone}), 200
             return jsonify({
-                "message": "Wrong username or password"}), 401
+                "message": "Wrong username or password"}), 403
 
 
     def get_specific_user(self, id):
@@ -357,7 +365,7 @@ class Food(object):
                         'food_image': food[3]})
                 return jsonify({"message": "Successful", "Food": foodlist}), 201
             return jsonify({
-                "message": "You dont have admin priviledges."}), 401
+                "message": "You dont have admin priviledges."}), 403
         return jsonify({
             "message": "Please login first."}), 401
 
@@ -410,7 +418,44 @@ class Food(object):
             return jsonify({
                 "message": "You dont have admin priviledges."}), 401
         return jsonify({
-            "message": "Please login first."}), 401        
+            "message": "Please login first."}), 401
+
+    def get_food(self, food_id):
+        """ get Food """
+        foodlist = {}
+        self.cur.execute("SELECT * FROM tbl_foods WHERE food_id=%(food_id)s", {'food_id': food_id})
+        numrows = self.cur.rowcount
+        if numrows > 0:
+            rows = self.cur.fetchall()
+            for food in rows:
+                foodlist.update({
+                    'food_id': food[0],
+                    'food_name': food[1],
+                    'food_price': food[2],
+                    'food_image': food[3]})
+            return jsonify({
+                "message": "Successful.",
+                "Foods": foodlist}), 200
+        return jsonify({
+            "message": "No Food."}), 400
+
+    def delete_food(self, food_id):
+        """ delete Food """
+        if self.is_loggedin() is True:
+            if self.is_admin() is True:
+                self.cur.execute("SELECT * FROM tbl_foods WHERE food_id=%(food_id)s", {'food_id': food_id})
+                numrows = self.cur.rowcount
+                if numrows > 0:
+                    #delete this food details
+                    self.cur.execute("DELETE FROM tbl_foods WHERE food_id=%(food_id)s", {'food_id': food_id})
+                    self.conn.commit()
+                    return jsonify({
+                        "message": "Delete Successful."}), 201
+                return jsonify({"message": "No Food."}), 400
+            return jsonify({
+                "message": "You dont have admin priviledges."}), 401
+        return jsonify({
+            "message": "Please login first."}), 401
 
     def is_loggedin(self):
         if 'username' in session:
