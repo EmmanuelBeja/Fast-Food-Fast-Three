@@ -39,30 +39,3 @@ def food():
         return jsonify({"message": res}), 400
     data = foodObject.get_foods()
     return data
-
-
-@food_api.route('/food/<int:food_id>', methods=['GET', 'PUT', 'DELETE'])
-def food_manipulation(food_id, **kwargs):
-    """ GET/PUT/DEL food """
-    if request.method == 'DELETE':
-        # DELETE
-        res = foodObject.delete_food(food_id)
-        return res
-
-    elif request.method == 'PUT':
-        # PUT
-        data = request.get_json()
-        food_name = data['food_name']
-        food_price = data['food_price']
-        food_image = data['food_image']
-        res = foodObject.update_food(
-            food_id,
-            food_name,
-            food_price,
-            food_image)
-        return res
-
-    else:
-        # GET
-        res = foodObject.get_food(food_id)
-        return res
