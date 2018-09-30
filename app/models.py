@@ -1,4 +1,4 @@
-"""app/v1/users/models.py"""
+"""app/v2/users/models.py"""
 from flask import jsonify, session
 import re
 
