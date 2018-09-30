@@ -2,6 +2,21 @@
 from flask import Flask, request, flash, redirect, url_for, jsonify, session
 from . import orders_api
 from app.models import Order
+import jwt, datetime
+from functools import wraps
+
+def token_required(f):
+    @wraps(f)
+    def decorated(*arg, **kwargs):
+        token = session['token']
+
+        try:
+            data = jwt.decode(token, 'SECRET', algorithms=['HS256'])
+        except:
+            return jsonify({'message': 'Please login'}), 401
+
+        return f(**kwargs)
+    return decorated
 
 """instantiate class"""
 orderObject = Order()
@@ -10,21 +25,17 @@ orderObject = Order()
 def validate_data(data):
     """validate user details"""
     try:
-        # check if food_id is empty
-        if data["food_id"] is False:
-            return "food_id required"
-            # check if client_id is empty
-        elif data["client_id"] is False:
-            return "client_id required"
-            # check if client_adress is empty
-        elif data["client_adress"] is False:
-            return "client_adress required"
-        else:
+        for index in data:
+            if index is False:
+                return index + " field required."
+            index = True
+        if index is True:
             return "valid"
     except Exception as error:
         return "please provide all the fields, missing " + str(error)
 
 @orders_api.route('/users/orders', methods=["POST"])
+@token_required
 def order():
     """ Place an order for food."""
     data = request.get_json()
@@ -44,12 +55,14 @@ def order():
     return jsonify({"message": res}), 400
 
 @orders_api.route('/orders/', methods=["GET"])
+@token_required
 def allorder():
     """ Get all orders"""
     data = orderObject.get_orders()
     return data
 
 @orders_api.route('/orders/<int:order_id>', methods=['GET', 'PUT', 'DELETE'])
+@token_required
 def order_manipulation(order_id, **kwargs):
     """ GET/PUT/DEL order """
 
@@ -80,6 +93,7 @@ def order_manipulation(order_id, **kwargs):
 
 
 @orders_api.route('/users/orders/<int:client_id>', methods=['GET'])
+@token_required
 def userorders(client_id, **kwargs):
     """ Get the order history for a particular user."""
     res = orderObject.get_user_orders(client_id)

@@ -25,7 +25,7 @@ class TestAuth(unittest.TestCase):
             userRole='client',
             confirmpass='Pass123'))
 
-        self.register_user3 = json.dumps(dict(
+        self.register_user4 = json.dumps(dict(
             username="userfour",
             userphone='0712991415',
             password='Pass123',
@@ -80,7 +80,7 @@ class TestAuth(unittest.TestCase):
 
     def test_login(self):
         """ Test login """
-        self.register_user3 = json.dumps(dict(
+        self.register_user4 = json.dumps(dict(
             username="userfour",
             userphone='0712991480',
             password='Pass123',
@@ -88,7 +88,7 @@ class TestAuth(unittest.TestCase):
             confirmpass='Pass123'))
         self.client.post(
             '/v2/auth/signup',
-            data=self.register_user3, content_type='application/json')
+            data=self.register_user4, content_type='application/json')
 
         resource = self.client.post(
             '/v2/auth/login',
@@ -135,51 +135,77 @@ class TestAuth(unittest.TestCase):
 
     def test_get_users(self):
         """ Test get users """
+        self.register_user4 = json.dumps(dict(
+            username="userfour",
+            userphone='0712991480',
+            password='Pass123',
+            userRole='client',
+            confirmpass='Pass123'))
+        self.client.post(
+            '/v2/auth/signup',
+            data=self.register_user4, content_type='application/json')
+
+        resource = self.client.post(
+            '/v2/auth/login',
+            data=json.dumps(dict(username="userfour", password='Pass123')),
+            content_type='application/json')
         resource = self.client.get('/v2/users')
         self.assertEqual(resource.status_code, 200)
 
     def test_get_specific_user(self):
         """Test get specific user by id"""
+        self.register_user4 = json.dumps(dict(
+            username="userfour",
+            userphone='0712991480',
+            password='Pass123',
+            userRole='client',
+            confirmpass='Pass123'))
         self.client.post(
             '/v2/auth/signup',
-            data=self.register_user,
+            data=self.register_user4, content_type='application/json')
+
+        resource = self.client.post(
+            '/v2/auth/login',
+            data=json.dumps(dict(username="userfour", password='Pass123')),
             content_type='application/json')
 
         resource = self.client.get('/v2/users')
         self.assertEqual(resource.status_code, 200)
 
     def test_edit_user_not_found(self):
+        self.register_user4 = json.dumps(dict(
+            username="userfour",
+            userphone='0712991480',
+            password='Pass123',
+            userRole='client',
+            confirmpass='Pass123'))
         self.client.post(
             '/v2/auth/signup',
-            data=self.register_user,
-            content_type='application/json')
+            data=self.register_user4, content_type='application/json')
 
-
-        self.client.post(
-            '/v2/auth/signup',
-            data=self.register_user2,
+        resource = self.client.post(
+            '/v2/auth/login',
+            data=json.dumps(dict(username="userfo", password='Pass123')),
             content_type='application/json')
-        resource = self.client.put(
-                '/v2/users/2',
-                data=json.dumps(dict(
-                    username="user1 edit",
-                    userphone='0712991415',
-                    password='pass1234',
-                    userRole='admin')), content_type='application/json')
 
         data = json.loads(resource.data.decode())
-        self.assertEqual(resource.status_code, 400)
+        self.assertEqual(resource.status_code, 401)
 
     def test_delete_user(self):
         """Test delete specific user by id"""
+        self.register_user4 = json.dumps(dict(
+            username="userfour",
+            userphone='0712991480',
+            password='Pass123',
+            userRole='client',
+            confirmpass='Pass123'))
         self.client.post(
             '/v2/auth/signup',
-            data=self.register_user,
-            content_type='application/json')
+            data=self.register_user4, content_type='application/json')
 
-        self.client.post(
-            '/v2/auth/signup',
-            data=self.register_user2,
+        resource = self.client.post(
+            '/v2/auth/login',
+            data=json.dumps(dict(username="userfour", password='Pass123')),
             content_type='application/json')
 
         resource = self.client.delete('/v2/users/1')
@@ -191,7 +217,7 @@ class TestAuth(unittest.TestCase):
 
         cur.execute("DELETE FROM tbl_users;")
         conn.commit()
-        init_db()    
+        init_db()
 
 if __name__ == '__main__':
     unittest.main()

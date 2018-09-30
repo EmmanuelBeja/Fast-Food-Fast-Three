@@ -2,7 +2,23 @@
 from flask import Flask, request, flash, redirect, url_for, jsonify, session
 from . import users_api
 from app.models import User
+import jwt, datetime
+from functools import wraps
 
+def token_required(f):
+    @wraps(f)
+    def decorated(*arg, **kwargs):
+        token = session['token']
+
+        try:
+            data = jwt.decode(token, 'SECRET', algorithms=['HS256'])
+        except:
+            return jsonify({'message': 'Please login'}), 401
+
+        return f(**kwargs)
+    return decorated
+
+"""instantiate user class"""
 userObject = User()
 
 
@@ -104,12 +120,14 @@ def login():
 
 
 @users_api.route('/users', methods=["GET"])
+@token_required
 def users():
     data = userObject.get_users()
     return data
 
 
 @users_api.route('/users/<int:id>', methods=["GET", "DELETE", "PUT"])
+@token_required
 def user_id(id):
     if request.method == "GET":
         """ Method to retrieve a specific user."""
@@ -142,7 +160,7 @@ def user_id(id):
 @users_api.route('/auth/logout')
 def logout():
     """ Method to logout user."""
-    if 'username' in session:
+    if 'token' in session:
         session.clear()
         return jsonify({"message": "Succeffully logout."})
     return jsonify({
