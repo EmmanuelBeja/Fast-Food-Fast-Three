@@ -8,6 +8,13 @@ from functools import wraps
 def token_required(f):
     @wraps(f)
     def decorated(*arg, **kwargs):
+        try:
+            session['token']
+        except:
+            session['token'] = None
+
+        if session['token'] is None:
+            return jsonify({'message': 'Please login'}), 401
         token = session['token']
 
         try:
@@ -28,8 +35,8 @@ def validate_data(data):
         for index in data:
             if index is False:
                 return index + " field required."
-            index = True
-        if index is True:
+            i = True
+        if i is True:
             return "valid"
     except Exception as error:
         return "please provide all the fields, missing " + str(error)

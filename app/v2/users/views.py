@@ -8,6 +8,13 @@ from functools import wraps
 def token_required(f):
     @wraps(f)
     def decorated(*arg, **kwargs):
+        try:
+            session['token']
+        except:
+            session['token'] = None
+
+        if session['token'] is None:
+            return jsonify({'message': 'Please login'}), 401
         token = session['token']
 
         try:
