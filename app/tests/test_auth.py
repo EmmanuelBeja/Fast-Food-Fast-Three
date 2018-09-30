@@ -10,9 +10,6 @@ from app.database.conn import dbcon
 class TestAuth(unittest.TestCase):
     """ Tests for the Auth """
     def setUp(self):
-        # pass in test configurations
-        #config_name = os.getenv('APP_SETTINGS', 'testing')
-        #DATABASE_URL="dbname=fastfoodfasttests user=emmanuelbeja password=#1Emmcodes host=localhost"
         app = create_app(config_name='testing')
         self.register_user = json.dumps(dict(
             username="user6",
@@ -37,13 +34,13 @@ class TestAuth(unittest.TestCase):
 
         self.client = app.test_client()
         self.client.post(
-            '/v1/auth/signup',
+            '/v2/auth/signup',
             data=self.register_user,
             content_type='application/json')
 
 
         self.client.post(
-            '/v1/auth/signup',
+            '/v2/auth/signup',
             data=self.register_user2,
             content_type='application/json')
 
@@ -51,7 +48,7 @@ class TestAuth(unittest.TestCase):
     def test_registration(self):
         """Test for user registration"""
         resource = self.client.post(
-            '/v1/auth/signup',
+            '/v2/auth/signup',
             data=json.dumps(dict(
                 username="userkamau",
                 userphone='0712991460',
@@ -68,7 +65,7 @@ class TestAuth(unittest.TestCase):
     def test_username_exist(self):
         """ Test if username exists """
         resource = self.client.post(
-            '/v1/auth/signup',
+            '/v2/auth/signup',
             data=json.dumps(dict(
                 username="user6",
                 userphone='0712991440',
@@ -89,11 +86,11 @@ class TestAuth(unittest.TestCase):
             userRole='client',
             confirmpass='Pass123'))
         self.client.post(
-            '/v1/auth/signup',
+            '/v2/auth/signup',
             data=self.register_user3, content_type='application/json')
 
         resource = self.client.post(
-            '/v1/auth/login',
+            '/v2/auth/login',
             data=json.dumps(dict(username="userfour", password='Pass123')),
             content_type='application/json')
 
@@ -107,7 +104,7 @@ class TestAuth(unittest.TestCase):
     def test_wrong_login_username(self):
         """ Test login validation """
         resource = self.client.post(
-            '/v1/auth/login',
+            '/v2/auth/login',
             data=json.dumps(dict(username="user5", password='Pass123')),
             content_type='application/json')
 
@@ -118,7 +115,7 @@ class TestAuth(unittest.TestCase):
     def test_wrong_login_details(self):
         """ Test login validation """
         resource = self.client.post(
-                '/v1/auth/login',
+                '/v2/auth/login',
                 data=json.dumps(dict(username="user1", password='')),
                 content_type='application/json')
 
@@ -128,32 +125,23 @@ class TestAuth(unittest.TestCase):
 
     def test_get_users(self):
         """ Test get users """
-        resource = self.client.get('/v1/users')
+        resource = self.client.get('/v2/users')
         self.assertEqual(resource.status_code, 200)
 
-    #def test_get_specific_user(self):
-    #    """Test get specific user by id"""
-    #    self.client.post(
-    #        '/v1/auth/signup',
-    #        data=self.register_user,
-    #        content_type='application/json')
-
-    #    resource = self.client.get('/v1/users/1')
-    #    self.assertEqual(resource.status_code, 200)
 
     def test_edit_user_not_found(self):
         self.client.post(
-            '/v1/auth/signup',
+            '/v2/auth/signup',
             data=self.register_user,
             content_type='application/json')
 
 
         self.client.post(
-            '/v1/auth/signup',
+            '/v2/auth/signup',
             data=self.register_user2,
             content_type='application/json')
         resource = self.client.put(
-                '/v1/users/2',
+                '/v2/users/2',
                 data=json.dumps(dict(
                     username="user1 edit",
                     userphone='0712991415',
@@ -166,17 +154,17 @@ class TestAuth(unittest.TestCase):
     def test_delete_user(self):
         """Test delete specific user by id"""
         self.client.post(
-            '/v1/auth/signup',
+            '/v2/auth/signup',
             data=self.register_user,
             content_type='application/json')
 
 
         self.client.post(
-            '/v1/auth/signup',
+            '/v2/auth/signup',
             data=self.register_user2,
             content_type='application/json')
 
-        resource = self.client.delete('/v1/users/1')
+        resource = self.client.delete('/v2/users/1')
         self.assertEqual(resource.status_code, 201)
 
 

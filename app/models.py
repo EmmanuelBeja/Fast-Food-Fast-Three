@@ -4,7 +4,16 @@ import re
 from .database.conn import dbcon
 
 
-def create_user(self, username, userphone, password, userRole):
+
+
+class User(object):
+    """User Class"""
+    def __init__(self):
+        """ Initialize empty user list"""
+        self.conn = dbcon()
+        self.cur = self.conn.cursor()
+
+    def create_user(self, username, userphone, password, userRole):
         """Create users"""
         self.users = {}
         if not self.valid_username(username):
@@ -371,4 +380,4 @@ class Food(object):
         if 'userrole' in session:
             if session['userrole'] == 'admin':
                 return True
-        return False        
+        return False
