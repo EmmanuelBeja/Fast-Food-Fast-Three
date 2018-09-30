@@ -11,7 +11,7 @@ def token_required(f):
         token = session['token']
 
         try:
-            data = jwt.decode(token, 'SECRET', algorithms=['HS256'])
+            data = jwt.decode(token, 'SECRET_KEY', algorithms=['HS256'])
         except:
             return jsonify({'message': 'Please login'}), 401
 

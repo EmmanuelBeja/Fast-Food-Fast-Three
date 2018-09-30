@@ -9,7 +9,7 @@ services:
 
 env:
   - DATABASE_URL="dbname=fastfoodfasttests user=emmanuelbeja password=#1Emmcodes"
-  - SECRET="3d6e1695ba974064b7d6c2ef2ebc39e3"
+  - SECRET_KEY="3d6e1695ba974064b7d6c2ef2ebc39e3"
 
 install:
   - pip3 install -r requirements.txt

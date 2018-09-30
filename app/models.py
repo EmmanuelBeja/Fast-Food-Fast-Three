@@ -8,7 +8,7 @@ def is_admin():
     """ check if a user is an admin """
     if 'token' in session:
         token = session['token']
-        token = jwt.decode(token, 'SECRET', algorithms=['HS256'])
+        token = jwt.decode(token, 'SECRET_KEY', algorithms=['HS256'])
         if token['userrole'] == 'admin':
             return True
     return False
@@ -46,7 +46,7 @@ class User(object):
                     userid = user[0]
                     username = user[1]
                     userrole = user[4]
-                    session['token'] = jwt.encode({'userid': userid, 'username': username, 'userrole': userrole, 'exp' : datetime.datetime.utcnow() + datetime.timedelta(minutes=30)},  'SECRET', algorithm='HS256')
+                    session['token'] = jwt.encode({'userid': userid, 'username': username, 'userrole': userrole, 'exp' : datetime.datetime.utcnow() + datetime.timedelta(minutes=30)},  'SECRET_KEY', algorithm='HS256')
                     return jsonify({
                         "message": "You are successfully logged in"}), 200
             return jsonify({
