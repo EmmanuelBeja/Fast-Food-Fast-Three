@@ -4,11 +4,18 @@ python:
 
   - "3.6"
 
-services: 
+services:
   - postgresql
+
+env:
+  - DATABASE_URL="dbname=fastfoodfasttests user=emmanuelbeja password=#1Emmcodes"
 
 install:
   - pip3 install -r requirements.txt
+
+before_script:
+  - psql -c 'create database fastfoodfasttests;' -U postgres
+  - psql -c "CREATE USER emmanuelbeja WITH PASSWORD '#1Emmcodes';" -U postgres
 
 script: pytest --cov=app/tests/
 
