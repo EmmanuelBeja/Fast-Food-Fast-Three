@@ -15,9 +15,6 @@ def create_app(config_name):
     #Initialize database
     init_db()
 
-    from .v2.food import food_api as api_blueprint
-    app.register_blueprint(api_blueprint, url_prefix='/v2')
-
     from .v2.orders import orders_api as api_blueprint
     app.register_blueprint(api_blueprint, url_prefix='/v2')
 
