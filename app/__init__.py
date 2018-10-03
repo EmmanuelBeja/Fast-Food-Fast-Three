@@ -1,4 +1,4 @@
-# third-party imports
+"""app Init"""
 import os
 from flask import Flask
 

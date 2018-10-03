@@ -1,3 +1,4 @@
+"""tables script"""
 
 table1 = """CREATE TABLE IF NOT EXISTS tbl_users(
 	userid  serial PRIMARY KEY,
@@ -26,4 +27,4 @@ table3 = """CREATE TABLE IF NOT EXISTS tbl_foods(
 	createddate timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP
 )"""
 
-queries = [table1,table2,table3]
+queries = [table1, table2, table3]
