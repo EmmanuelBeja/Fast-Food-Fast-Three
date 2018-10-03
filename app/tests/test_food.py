@@ -1,8 +1,6 @@
 """app/tests_food.py"""
 import unittest
-import os
 import json
-from flask import session
 from app import create_app, init_db
 from app.database.conn import dbcon
 
@@ -10,18 +8,19 @@ from app.database.conn import dbcon
 class TestFood(unittest.TestCase):
     """ Tests for the Orders """
     def setUp(self):
-        # pass in test configurations
-        #config_name = os.getenv('APP_SETTINGS', 'testing')
+        """setup"""
         app = create_app(config_name='testing')
+        self.client = app.test_client()
+
         self.create_food = json.dumps(dict(
-                food_name="mchele",
-                food_price=200,
-                food_image='mchele.jpg'))
+            food_name="mchele",
+            food_price=200,
+            food_image='mchele.jpg'))
 
         self.create_food2 = json.dumps(dict(
-                food_name="pilau",
-                food_price=200,
-                food_image='pilau.jpg'))
+            food_name="pilau",
+            food_price=200,
+            food_image='pilau.jpg'))
 
         self.register_user = json.dumps(dict(
             username="useeer",
@@ -30,19 +29,17 @@ class TestFood(unittest.TestCase):
             userRole='admin',
             confirmpass='Pass123'))
 
-        self.login = data=json.dumps(dict(username="useeer", password='Pass123'))
-
-        self.client = app.test_client()
+        self.login = json.dumps(dict(username="useeer", password='Pass123'))
 
         self.signupuser = self.client.post(
-           '/v2/auth/signup',
-           data=self.register_user,
-           content_type='application/json')
+            '/v2/auth/signup',
+            data=self.register_user,
+            content_type='application/json')
 
         self.client.post(
-           '/v2/auth/login',
-           data=self.login,
-           content_type='application/json')
+            '/v2/auth/login',
+            data=self.login,
+            content_type='application/json')
 
         self.client.post(
             '/v2/menu',
@@ -57,14 +54,15 @@ class TestFood(unittest.TestCase):
     def test_food_creation(self):
         """ Test for food creation """
         resource = self.client.post(
-                '/v2/menu',
-                data=self.create_food,
-                content_type='application/json')
+            '/v2/menu',
+            data=self.create_food,
+            content_type='application/json')
 
         data = json.loads(resource.data.decode())
         self.assertEqual(resource.status_code, 201)
         self.assertEqual(resource.content_type, 'application/json')
         self.assertEqual(data['message'].strip(), 'Successful')
+
 
     def test_get_all_foods(self):
         """ Test for getting all foods """
@@ -89,9 +87,9 @@ class TestFood(unittest.TestCase):
     def test_food_can_be_edited(self):
         """ test food can be edited """
         resource = self.client.put(
-                '/v2/food/2',
-                data=self.create_food,
-                content_type='application/json')
+            '/v2/food/2',
+            data=self.create_food,
+            content_type='application/json')
 
         data = json.loads(resource.data.decode())
         self.assertEqual(resource.status_code, 201)

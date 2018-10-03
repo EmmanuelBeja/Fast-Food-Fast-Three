@@ -1,6 +1,7 @@
 """ Database connection """
-import psycopg2
 import os
+import psycopg2
+
 
 from .create_table import queries
 
@@ -10,6 +11,7 @@ def dbcon():
     return psycopg2.connect(url)
 
 def init_db():
+    """Initialize db"""
     try:
         connection = dbcon()
         connection.autocommit = True

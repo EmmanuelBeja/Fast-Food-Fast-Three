@@ -1,31 +1,28 @@
 """app/v1/users/views.py"""
-from flask import Flask, request, flash, redirect, url_for, jsonify, session
+from functools import wraps
+import jwt
+from flask import request, jsonify, session
 from . import users_api
 from app.models import User
-import jwt, datetime
-from functools import wraps
+
 
 def token_required(f):
+    """check"""
     @wraps(f)
-    def decorated(*arg, **kwargs):
+    def decorated(**kwargs):
+        """decorator"""
         try:
             session['token']
-        except:
+        except BaseException:
             session['token'] = None
 
         if session['token'] is None:
-            return jsonify({'message': 'Please login'}), 401
-        token = session['token']
-
-        try:
-            data = jwt.decode(token, 'SECRET_KEY', algorithms=['HS256'])
-        except:
             return jsonify({'message': 'Please login'}), 401
 
         return f(**kwargs)
     return decorated
 
-"""instantiate user class"""
+
 userObject = User()
 
 
@@ -68,6 +65,7 @@ def validate_data_signup(data):
             return "valid"
     except Exception as error:
         return "please provide all the fields, missing " + str(error)
+
 
 def validate_data_login(data):
     """validate user details"""
@@ -121,27 +119,27 @@ def login():
     if res == "valid":
         username = data['username']
         password = data['password']
-        res = userObject.login(username, password)
-        return res
+        response = userObject.login(username, password)
+        return response
     return jsonify({"message": res}), 401
 
 
 @users_api.route('/users', methods=["GET"])
 @token_required
 def users():
+    """get all users"""
     data = userObject.get_users()
     return data
 
 
 @users_api.route('/users/<int:id>', methods=["GET", "DELETE", "PUT"])
 @token_required
-def user_id(id):
+def users_verbs(id):
+    """run http verbs"""
     if request.method == "GET":
-        """ Method to retrieve a specific user."""
         data = userObject.get_specific_user(id)
         return data
     elif request.method == "PUT":
-        """ Method to edit a specific user."""
         data = request.get_json()
         res = validate_data_signup(data)
 
@@ -159,9 +157,8 @@ def user_id(id):
             return response
         return jsonify({"message": res}), 400
     elif request.method == "DELETE":
-        """ Method to delete a specific user."""
-        res = userObject.delete_user(id)
-        return res
+        response = userObject.delete_user(id)
+        return response
 
 
 @users_api.route('/auth/logout')

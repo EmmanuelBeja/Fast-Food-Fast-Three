@@ -1,8 +1,6 @@
 """app/tests_orders.py"""
 import unittest
-import os
 import json
-from flask import session
 from app import create_app, init_db
 from app.database.conn import dbcon
 
@@ -10,9 +8,7 @@ from app.database.conn import dbcon
 class TestOrders(unittest.TestCase):
     """ Tests for the Orders """
     def setUp(self):
-        # pass in test configurations
-        #config_name = os.getenv('APP_SETTINGS', 'testing')
-        #DATABASE_URL="dbname=fastfoodfasttests user=emmanuelbeja password=#1Emmcodes host=localhost"
+        """setup"""
         app = create_app(config_name='testing')
         self.client = app.test_client()
 
@@ -23,23 +19,23 @@ class TestOrders(unittest.TestCase):
             userRole='admin',
             confirmpass='Pass123'))
 
-        self.login = data=json.dumps(dict(username="useer", password='Pass123'))
+        self.login = json.dumps(dict(username="useer", password='Pass123'))
 
         self.create_order = json.dumps(dict(
-                food_id=1,
-                client_id=1,
-                client_adress='Likoni',
-                status='pending'))
+            food_id=1,
+            client_id=1,
+            client_adress='Likoni',
+            status='pending'))
 
         self.signupuser = self.client.post(
-           '/v2/auth/signup',
-           data=self.register_user,
-           content_type='application/json')
+            '/v2/auth/signup',
+            data=self.register_user,
+            content_type='application/json')
 
         self.client.post(
-           '/v2/auth/login',
-           data=self.login,
-           content_type='application/json')
+            '/v2/auth/login',
+            data=self.login,
+            content_type='application/json')
 
         self.client.post(
             '/v2/users/orders',
@@ -49,16 +45,15 @@ class TestOrders(unittest.TestCase):
 
     def test_order_creation(self):
         """ Test for order creation """
-
         resource = self.client.post(
-                '/v2/users/orders',
-                data=self.create_order,
-                content_type='application/json')
-
+            '/v2/users/orders',
+            data=self.create_order,
+            content_type='application/json')
         data = json.loads(resource.data.decode())
         self.assertEqual(resource.status_code, 201)
         self.assertEqual(resource.content_type, 'application/json')
         self.assertEqual(data['message'].strip(), 'Successful')
+
 
     def test_get_all_orders(self):
         """ Test for getting all orders """
@@ -66,38 +61,43 @@ class TestOrders(unittest.TestCase):
             '/v2/orders/',
             data=json.dumps(dict()),
             content_type='application/json')
-
         data = json.loads(resource.data.decode())
         self.assertEqual(resource.status_code, 200)
         self.assertEqual(resource.content_type, 'application/json')
         self.assertEqual(data['message'].strip(), 'Successful.')
 
+
     def test_get_order_by_order_id(self):
         """ Test for getting specific orders """
         resource = self.client.get('/v2/orders/1')
+        data = json.loads(resource.data.decode())
         self.assertEqual(resource.status_code, 200)
+        self.assertEqual(data['message'].strip(), 'Successful.')
+
 
     def test_order_can_be_edited(self):
         """ test order can be edited """
         resource = self.client.put(
-                '/v2/orders/1',
-                data=self.create_order,
-                content_type='application/json')
-
+            '/v2/orders/1',
+            data=self.create_order,
+            content_type='application/json')
         data = json.loads(resource.data.decode())
         self.assertEqual(resource.status_code, 201)
         self.assertEqual(resource.content_type, 'application/json')
         self.assertEqual(data['message'].strip(), 'Successful')
 
+
     def test_order_deletion(self):
         """Test API can delete an existing order. (DELETE request)."""
-        res = self.client.delete('/v2/orders/1')
-        self.assertEqual(res.status_code, 201)
+        resource = self.client.delete('/v2/orders/1')
+        data = json.loads(resource.data.decode())
+        self.assertEqual(resource.status_code, 201)
+        self.assertEqual(data['message'].strip(), 'Delete Successful.')
+
 
     def tearDown(self):
         conn = dbcon()
         cur = conn.cursor()
-
         cur.execute("DELETE FROM tbl_users;")
         conn.commit()
         init_db()

@@ -1,31 +1,28 @@
 """/app/v1/orders/views.py"""
-from flask import Flask, request, flash, redirect, url_for, jsonify, session
+from functools import wraps
+import jwt
+from flask import request, jsonify, session
 from . import orders_api
 from app.models import Order
-import jwt, datetime
-from functools import wraps
+
 
 def token_required(f):
+    """token validation"""
     @wraps(f)
-    def decorated(*arg, **kwargs):
+    def decorated(**kwargs):
+        """decorator"""
         try:
             session['token']
-        except:
+        except BaseException:
             session['token'] = None
 
         if session['token'] is None:
-            return jsonify({'message': 'Please login'}), 401
-        token = session['token']
-
-        try:
-            data = jwt.decode(token, 'SECRET_KEY', algorithms=['HS256'])
-        except:
             return jsonify({'message': 'Please login'}), 401
 
         return f(**kwargs)
     return decorated
 
-"""instantiate class"""
+
 orderObject = Order()
 
 
@@ -41,6 +38,7 @@ def validate_data(data):
     except Exception as error:
         return "please provide all the fields, missing " + str(error)
 
+
 @orders_api.route('/users/orders', methods=["POST"])
 @token_required
 def order():
@@ -53,13 +51,14 @@ def order():
         client_id = data['client_id']
         client_adress = data['client_adress']
         status = "pending"
-        res = orderObject.create_order(
+        response = orderObject.create_order(
             food_id,
             client_id,
             client_adress,
             status)
-        return res
-    return jsonify({"message": res}), 400
+        return response
+    return jsonify({"message": response}), 400
+
 
 @orders_api.route('/orders/', methods=["GET"])
 @token_required
@@ -68,11 +67,11 @@ def allorder():
     data = orderObject.get_orders()
     return data
 
+
 @orders_api.route('/orders/<int:order_id>', methods=['GET', 'PUT', 'DELETE'])
 @token_required
-def order_manipulation(order_id, **kwargs):
+def order_manipulation(order_id):
     """ GET/PUT/DEL order """
-
     if request.method == 'DELETE':
         # DELETE deletes a specific order
         res = orderObject.delete_order(order_id)
@@ -93,15 +92,14 @@ def order_manipulation(order_id, **kwargs):
             client_adress,
             status)
         return res
-    else:
-        # GET gets a specific order
-        res = orderObject.get_order(order_id)
-        return res
+    # GET gets a specific order
+    res = orderObject.get_order(order_id)
+    return res
 
 
 @orders_api.route('/users/orders/<int:client_id>', methods=['GET'])
 @token_required
-def userorders(client_id, **kwargs):
+def userorders(client_id):
     """ Get the order history for a particular user."""
     res = orderObject.get_user_orders(client_id)
     return res

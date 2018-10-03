@@ -1,8 +1,6 @@
 """app/tests_auth.py"""
 import unittest
-import os
 import json
-from flask import session
 from app import create_app
 from app.database.conn import dbcon
 from app.database.conn import init_db
@@ -10,7 +8,14 @@ from app.database.conn import init_db
 class TestAuth(unittest.TestCase):
     """ Tests for the Auth """
     def setUp(self):
+        """setup"""
+
         app = create_app(config_name='testing')
+        self.client = app.test_client()
+
+        self.conn = dbcon()
+        self.cur = self.conn.cursor()
+
         self.register_user = json.dumps(dict(
             username="user6",
             userphone='0712991415',
@@ -32,7 +37,6 @@ class TestAuth(unittest.TestCase):
             userRole='client',
             confirmpass='Pass123'))
 
-        self.client = app.test_client()
         self.client.post(
             '/v2/auth/signup',
             data=self.register_user,
@@ -42,9 +46,6 @@ class TestAuth(unittest.TestCase):
             '/v2/auth/signup',
             data=self.register_user2,
             content_type='application/json')
-
-        self.conn = dbcon()
-        self.cur = self.conn.cursor()
 
 
     def test_registration(self):
@@ -57,14 +58,14 @@ class TestAuth(unittest.TestCase):
                 password='pass1234',
                 userRole='client',
                 confirmpass='pass1234')), content_type='application/json')
-
         data = json.loads(resource.data.decode())
         self.assertEqual(resource.status_code, 201)
         self.assertEqual(resource.content_type, 'application/json')
         self.assertEqual(data['message'].strip(), 'Successful')
 
-    def test_username_exist(self):
-        """ Test if username exists """
+
+    def test_username_already_taken(self):
+        """ Test if username already taken """
         resource = self.client.post(
             '/v2/auth/signup',
             data=json.dumps(dict(
@@ -73,28 +74,26 @@ class TestAuth(unittest.TestCase):
                 password='pass1234',
                 userRole='client',
                 confirmpass='pass1234')), content_type='application/json')
-
         data = json.loads(resource.data.decode())
         self.assertEqual(resource.status_code, 400)
         self.assertEqual(resource.content_type, 'application/json')
+        self.assertEqual(data['message'].strip(), 'Username is taken.')
+
 
     def test_login(self):
         """ Test login """
-        self.register_user4 = json.dumps(dict(
-            username="userfour",
-            userphone='0712991480',
-            password='Pass123',
-            userRole='client',
-            confirmpass='Pass123'))
         self.client.post(
             '/v2/auth/signup',
-            data=self.register_user4, content_type='application/json')
-
+            data=json.dumps(dict(
+                username="userfour",
+                userphone='0712991480',
+                password='Pass123',
+                userRole='client',
+                confirmpass='Pass123')), content_type='application/json')
         resource = self.client.post(
             '/v2/auth/login',
             data=json.dumps(dict(username="userfour", password='Pass123')),
             content_type='application/json')
-
         data = json.loads(resource.data.decode())
         self.assertEqual(resource.status_code, 200)
         self.assertEqual(resource.content_type, 'application/json')
@@ -102,86 +101,91 @@ class TestAuth(unittest.TestCase):
             data['message'].strip(),
             'You are successfully logged in')
 
+
     def test_wrong_login_username(self):
         """ Test login validation """
         resource = self.client.post(
             '/v2/auth/login',
             data=json.dumps(dict(username="user5", password='Pass123')),
             content_type='application/json')
-
         data = json.loads(resource.data.decode())
         self.assertEqual(resource.status_code, 401)
         self.assertEqual(resource.content_type, 'application/json')
+        self.assertEqual(data['message'].strip(), 'Please register first.')
 
-    def test_wrong_login_details(self):
-        """ Test login validation """
-        self.register_user3 = json.dumps(dict(
-            username="user1",
-            userphone='0712991490',
-            password='Pass123',
-            userRole='client',
-            confirmpass='Pass123'))
+
+    def test_wrong_login_password(self):
+        """ Test wrong login password """
         self.client.post(
             '/v2/auth/signup',
-            data=self.register_user3, content_type='application/json')
+            data=json.dumps(dict(
+                username="user1",
+                userphone='0712991490',
+                password='Pass123',
+                userRole='client',
+                confirmpass='Pass123')), content_type='application/json')
         resource = self.client.post(
-                '/v2/auth/login',
-                data=json.dumps(dict(username="user1", password='12')),
-                content_type='application/json')
-
+            '/v2/auth/login',
+            data=json.dumps(dict(username="user1", password='12')),
+            content_type='application/json')
         data = json.loads(resource.data.decode())
         self.assertEqual(resource.status_code, 403)
         self.assertEqual(resource.content_type, 'application/json')
+        self.assertEqual(data['message'].strip(), 'Wrong username or password')
+
 
     def test_get_users(self):
         """ Test get users """
-        self.register_user4 = json.dumps(dict(
-            username="userfour",
-            userphone='0712991480',
-            password='Pass123',
-            userRole='client',
-            confirmpass='Pass123'))
         self.client.post(
             '/v2/auth/signup',
-            data=self.register_user4, content_type='application/json')
-
+            data=json.dumps(dict(
+                username="userfour",
+                userphone='0712991480',
+                password='Pass123',
+                userRole='client',
+                confirmpass='Pass123')), content_type='application/json')
         resource = self.client.post(
             '/v2/auth/login',
             data=json.dumps(dict(username="userfour", password='Pass123')),
             content_type='application/json')
+        data = json.loads(resource.data.decode())
         resource = self.client.get('/v2/users')
         self.assertEqual(resource.status_code, 200)
+        self.assertEqual(resource.content_type, 'application/json')
+        self.assertEqual(data['message'].strip(), 'You are successfully logged in')
+
 
     def test_get_specific_user(self):
         """Test get specific user by id"""
-        self.register_user4 = json.dumps(dict(
-            username="userfour",
-            userphone='0712991480',
-            password='Pass123',
-            userRole='client',
-            confirmpass='Pass123'))
         self.client.post(
             '/v2/auth/signup',
-            data=self.register_user4, content_type='application/json')
-
+            data=json.dumps(dict(
+                username="userfour",
+                userphone='0712991480',
+                password='Pass123',
+                userRole='client',
+                confirmpass='Pass123')), content_type='application/json')
         resource = self.client.post(
             '/v2/auth/login',
             data=json.dumps(dict(username="userfour", password='Pass123')),
             content_type='application/json')
-
         resource = self.client.get('/v2/users')
+        data = json.loads(resource.data.decode())
         self.assertEqual(resource.status_code, 200)
+        self.assertEqual(resource.content_type, 'application/json')
+        self.assertEqual(data['message'].strip(), 'Successful.')
+
 
     def test_edit_user_not_found(self):
-        self.register_user4 = json.dumps(dict(
-            username="userfour",
-            userphone='0712991480',
-            password='Pass123',
-            userRole='client',
-            confirmpass='Pass123'))
+        """test if user exists"""
         self.client.post(
             '/v2/auth/signup',
-            data=self.register_user4, content_type='application/json')
+            data=json.dumps(dict(
+                username="userfour",
+                userphone='0712991480',
+                password='Pass123',
+                userRole='client',
+                confirmpass='Pass123')), content_type='application/json')
 
         resource = self.client.post(
             '/v2/auth/login',
@@ -190,26 +194,31 @@ class TestAuth(unittest.TestCase):
 
         data = json.loads(resource.data.decode())
         self.assertEqual(resource.status_code, 401)
+        self.assertEqual(resource.content_type, 'application/json')
+        self.assertEqual(data['message'].strip(), 'Please register first.')
+
 
     def test_delete_user(self):
         """Test delete specific user by id"""
-        self.register_user4 = json.dumps(dict(
-            username="userfour",
-            userphone='0712991480',
-            password='Pass123',
-            userRole='client',
-            confirmpass='Pass123'))
         self.client.post(
             '/v2/auth/signup',
-            data=self.register_user4, content_type='application/json')
-
+            data=json.dumps(dict(
+                username="userfour",
+                userphone='0712991480',
+                password='Pass123',
+                userRole='client',
+                confirmpass='Pass123')), content_type='application/json')
         resource = self.client.post(
             '/v2/auth/login',
             data=json.dumps(dict(username="userfour", password='Pass123')),
             content_type='application/json')
-
         resource = self.client.delete('/v2/users/1')
+        data = json.loads(resource.data.decode())
         self.assertEqual(resource.status_code, 201)
+        self.assertEqual(resource.content_type, 'application/json')
+        self.assertEqual(data['message'].strip(), 'Delete Successful.')
+
+
 
     def tearDown(self):
         conn = dbcon()
