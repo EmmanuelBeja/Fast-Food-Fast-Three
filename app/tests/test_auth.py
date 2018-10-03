@@ -61,7 +61,7 @@ class TestAuth(unittest.TestCase):
         data = json.loads(resource.data.decode())
         self.assertEqual(resource.status_code, 201)
         self.assertEqual(resource.content_type, 'application/json')
-        self.assertEqual(data['message'].strip(), 'Successful')
+        self.assertEqual(data['message'].strip(), 'Signup Successful')
 
 
     def test_username_already_taken(self):
@@ -163,17 +163,17 @@ class TestAuth(unittest.TestCase):
                 username="userfour",
                 userphone='0712991480',
                 password='Pass123',
-                userRole='client',
+                userRole='admin',
                 confirmpass='Pass123')), content_type='application/json')
         resource = self.client.post(
             '/v2/auth/login',
             data=json.dumps(dict(username="userfour", password='Pass123')),
             content_type='application/json')
-        resource = self.client.get('/v2/users')
+        resource = self.client.get('/v2/users/5')
         data = json.loads(resource.data.decode())
         self.assertEqual(resource.status_code, 200)
         self.assertEqual(resource.content_type, 'application/json')
-        self.assertEqual(data['message'].strip(), 'Successful.')
+        self.assertEqual(data['message'].strip(), 'Successful. User Found.')
 
 
     def test_edit_user_not_found(self):

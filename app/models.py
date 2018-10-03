@@ -36,7 +36,7 @@ class User(object):
                 VALUES(%(username)s, %(userphone)s, %(password)s, %(userrole)s);", {
                         'username': username, 'userphone': userphone, 'password': password, 'userrole': userRole})
                 self.conn.commit()
-                return jsonify({"message": "Successful"}), 201
+                return jsonify({"message": "Signup Successful"}), 201
             return jsonify({"message": "Userphone is taken."}), 400
         return jsonify({"message": "Username is taken."}), 400
 
@@ -75,7 +75,7 @@ class User(object):
                         'userRole': user[4],
                         'userPhone': user[2]})
                     return jsonify({
-                        "message": "Successful",
+                        "message": "Successful. User Found.",
                         "user": self.userlist}), 200
             return jsonify({"message": "user does not exist"}), 400
         return jsonify({
@@ -94,7 +94,7 @@ class User(object):
                     'userPhone': user[2]})
                 self.result.append(dict(self.userlist))
             return jsonify({
-                "message": "Successful.",
+                "message": "Successful. Users Found",
                 "Users": self.result}), 200
         return jsonify({
             "message": "No user."}), 400
@@ -114,7 +114,7 @@ class User(object):
                 "UPDATE tbl_users SET username=%s, userphone=%s, password=%s\
             WHERE userid=%s", (username, userphone, password, id))
             self.conn.commit()
-            return jsonify({"message": "Successful"}), 200
+            return jsonify({"message": "Update Successful"}), 200
         return jsonify({"message": "No user."}), 400
 
     def delete_user(self, id):
@@ -167,10 +167,11 @@ class Order(object):
         """Create order_item"""
         self.cur.execute("INSERT INTO  tbl_orders(food_id, client_id, client_adress, status)\
         VALUES(%(food_id)s, %(client_id)s, %(client_adress)s, %(status)s);",
-                         {'food_id': food_id, 'client_id': client_id, 'client_adress': client_adress,
+                         {'food_id': food_id, 'client_id': client_id,\
+                         'client_adress': client_adress,
                           'status': status})
         self.conn.commit()
-        return jsonify({"message": "Successful"}), 201
+        return jsonify({"message": "Successful. Order created."}), 201
 
     def get_orders(self):
         """ get all Orders """
@@ -186,7 +187,7 @@ class Order(object):
                         'client_adress': order[3]})
                     self.result.append(dict(self.orderlist))
                 return jsonify({
-                    "message": "Successful.",
+                    "message": "Successful. Orders Found.",
                     "Orders": self.result}), 200
             return jsonify({
                 "message": "No Order."}), 400
@@ -208,7 +209,7 @@ class Order(object):
                         'client_adress': order[3]})
                     self.result.append(dict(self.orderlist))
                 return jsonify({
-                    "message": "Successful.",
+                    "message": "Successful. Order found.",
                     "Orders": self.result}), 200
             return jsonify({
                 "message": "No Order."}), 400
@@ -229,7 +230,7 @@ class Order(object):
                         'client_adress': order[3]})
                     self.result.append(dict(self.orderlist))
                 return jsonify({
-                    "message": "Successful.",
+                    "message": "Successful. User orders found.",
                     "Orders": self.result}), 200
             return jsonify({
                 "message": "No Order."}), 400
@@ -267,7 +268,7 @@ class Order(object):
                         'client_id': order[2],
                         'client_adress': order[3]})
                     return jsonify({
-                        "message": "Successful",
+                        "message": "Update Successful.",
                         "Order": self.orderlist}), 201
             return jsonify({"message": "No Order."}), 400
         return jsonify({
@@ -304,9 +305,10 @@ class Food(object):
             self.cur.execute(
                 "INSERT INTO  tbl_foods(food_name, food_price, food_image)\
             VALUES(%(food_name)s, %(food_price)s, %(food_image)s);", {
-                    'food_name': food_name, 'food_price': food_price, 'food_image': food_image})
+                'food_name': food_name, 'food_price': food_price,\
+                    'food_image': food_image})
             self.conn.commit()
-            return jsonify({"message": "Successful"}), 201
+            return jsonify({"message": "Successful. Food Created"}), 201
         return jsonify({
             "message": "You dont have admin priviledges."}), 403
 
@@ -323,7 +325,7 @@ class Food(object):
                     'food_image': food[3]})
                 self.result.append(dict(self.foodlist))
             return jsonify({
-                "message": "Successful.",
+                "message": "Successful. Food Found",
                 "Foods": self.result}), 200
         return jsonify({
             "message": "No Food."}), 400
@@ -339,7 +341,7 @@ class Food(object):
                     "UPDATE tbl_foods SET food_name=%s, food_price=%s, food_image=%s\
                 WHERE food_id=%s", (food_name, food_price, food_image, food_id))
                 self.conn.commit()
-                return jsonify({"message": "Successful"}), 201
+                return jsonify({"message": "Update Successful"}), 201
             return jsonify({"message": "No Food."}), 400
         return jsonify({
             "message": "You dont have admin priviledges."}), 401
@@ -357,7 +359,7 @@ class Food(object):
                     'food_price': food[2],
                     'food_image': food[3]})
             return jsonify({
-                "message": "Successful.",
+                "message": "Successful. Food Found",
                 "Foods": self.foodlist}), 200
         return jsonify({
             "message": "No Food."}), 400

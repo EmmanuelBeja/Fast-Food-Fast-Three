@@ -1,6 +1,6 @@
 # Fast-Food-Fast
-[![Build Status](https://travis-ci.org/EmmanuelBeja/Fast-Food-Fast-Three.svg?branch=ch-code-linting-160877362)](https://travis-ci.org/EmmanuelBeja/Fast-Food-Fast-Three)
-[![Coverage Status](https://coveralls.io/repos/github/EmmanuelBeja/Fast-Food-Fast-Three/badge.svg?branch=ch-code-linting-160877362)](https://coveralls.io/github/EmmanuelBeja/Fast-Food-Fast-Three?branch=ch-code-linting-160877362)
+[![Build Status](https://travis-ci.org/EmmanuelBeja/Fast-Food-Fast-Three.svg?branch=bg-descriptive-response-160932651)](https://travis-ci.org/EmmanuelBeja/Fast-Food-Fast-Three)
+[![Coverage Status](https://coveralls.io/repos/github/EmmanuelBeja/Fast-Food-Fast-Three/badge.svg?branch=bg-descriptive-response-160932651)](https://coveralls.io/github/EmmanuelBeja/Fast-Food-Fast-Three?branch=bg-descriptive-response-160932651)
 [![Maintainability](https://api.codeclimate.com/v1/badges/303579a3adac4148d43b/maintainability)](https://codeclimate.com/github/EmmanuelBeja/Fast-Food-Fast-Three/maintainability)
 
   A platform where people get to order food added by the admin. The admin can then accept decline or complete the orders made.
@@ -10,7 +10,7 @@
 
   To interact with the api endpoints, visit the link and add endpoints [here](https://emmanuelbeja-fast-food-fast.herokuapp.com/)<br>
 
-  API documentation [here](https://documenter.getpostman.com/view/5399899/RWaPv6zH)
+  API documentation [here](https://documenter.getpostman.com/view/5399899/RWgm2Lm5)
 
   ## Use the following endpoints to perform the specified tasks
 

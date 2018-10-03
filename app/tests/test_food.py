@@ -61,7 +61,7 @@ class TestFood(unittest.TestCase):
         data = json.loads(resource.data.decode())
         self.assertEqual(resource.status_code, 201)
         self.assertEqual(resource.content_type, 'application/json')
-        self.assertEqual(data['message'].strip(), 'Successful')
+        self.assertEqual(data['message'].strip(), 'Successful. Food Created')
 
 
     def test_get_all_foods(self):
@@ -74,7 +74,7 @@ class TestFood(unittest.TestCase):
         data = json.loads(resource.data.decode())
         self.assertEqual(resource.status_code, 200)
         self.assertEqual(resource.content_type, 'application/json')
-        self.assertEqual(data['message'].strip(), 'Successful.')
+        self.assertEqual(data['message'].strip(), 'Successful. Food Found')
 
     def test_get_food_by_food_id(self):
         """ Test for getting specific foods """
@@ -82,7 +82,7 @@ class TestFood(unittest.TestCase):
         data = json.loads(resource.data.decode())
         self.assertEqual(resource.status_code, 200)
         self.assertEqual(resource.content_type, 'application/json')
-        self.assertEqual(data['message'].strip(), 'Successful.')
+        self.assertEqual(data['message'].strip(), 'Successful. Food Found')
 
     def test_food_can_be_edited(self):
         """ test food can be edited """
@@ -94,7 +94,7 @@ class TestFood(unittest.TestCase):
         data = json.loads(resource.data.decode())
         self.assertEqual(resource.status_code, 201)
         self.assertEqual(resource.content_type, 'application/json')
-        self.assertEqual(data['message'].strip(), 'Successful')
+        self.assertEqual(data['message'].strip(), 'Update Successful')
 
     def test_food_deletion(self):
         """Test API can delete an existing order. (DELETE request)."""
