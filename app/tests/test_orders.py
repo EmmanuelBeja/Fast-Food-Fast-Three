@@ -52,7 +52,7 @@ class TestOrders(unittest.TestCase):
         data = json.loads(resource.data.decode())
         self.assertEqual(resource.status_code, 201)
         self.assertEqual(resource.content_type, 'application/json')
-        self.assertEqual(data['message'].strip(), 'Successful')
+        self.assertEqual(data['message'].strip(), 'Successful. Order created.')
 
 
     def test_get_all_orders(self):
@@ -64,7 +64,7 @@ class TestOrders(unittest.TestCase):
         data = json.loads(resource.data.decode())
         self.assertEqual(resource.status_code, 200)
         self.assertEqual(resource.content_type, 'application/json')
-        self.assertEqual(data['message'].strip(), 'Successful.')
+        self.assertEqual(data['message'].strip(), 'Successful. Orders Found.')
 
 
     def test_get_order_by_order_id(self):
@@ -72,7 +72,7 @@ class TestOrders(unittest.TestCase):
         resource = self.client.get('/v2/orders/1')
         data = json.loads(resource.data.decode())
         self.assertEqual(resource.status_code, 200)
-        self.assertEqual(data['message'].strip(), 'Successful.')
+        self.assertEqual(data['message'].strip(), 'Successful. Order found.')
 
 
     def test_order_can_be_edited(self):
@@ -84,7 +84,7 @@ class TestOrders(unittest.TestCase):
         data = json.loads(resource.data.decode())
         self.assertEqual(resource.status_code, 201)
         self.assertEqual(resource.content_type, 'application/json')
-        self.assertEqual(data['message'].strip(), 'Successful')
+        self.assertEqual(data['message'].strip(), 'Update Successful.')
 
 
     def test_order_deletion(self):
