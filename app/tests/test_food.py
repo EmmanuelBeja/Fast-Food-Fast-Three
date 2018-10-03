@@ -17,6 +17,11 @@ class TestFood(unittest.TestCase):
             food_price=200,
             food_image='mchele.jpg'))
 
+        self.create_food2 = json.dumps(dict(
+            food_name="pilau",
+            food_price=200,
+            food_image='pilau.jpg'))
+
         self.register_user = json.dumps(dict(
             username="useeer",
             userphone='0712991415',
@@ -41,6 +46,10 @@ class TestFood(unittest.TestCase):
             data=self.create_food,
             content_type='application/json')
 
+        self.client.post(
+            '/v2/menu',
+            data=self.create_food2,
+            content_type='application/json')
 
     def test_food_creation(self):
         """ Test for food creation """
@@ -69,7 +78,7 @@ class TestFood(unittest.TestCase):
 
     def test_get_food_by_food_id(self):
         """ Test for getting specific foods """
-        resource = self.client.get('/v2/food/1')
+        resource = self.client.get('/v2/food/2')
         data = json.loads(resource.data.decode())
         self.assertEqual(resource.status_code, 200)
         self.assertEqual(resource.content_type, 'application/json')
