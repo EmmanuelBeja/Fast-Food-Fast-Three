@@ -4,7 +4,7 @@ table1 = """CREATE TABLE IF NOT EXISTS tbl_users(
 	userid  serial PRIMARY KEY,
 	username varchar(25) UNIQUE NOT NULL,
     userphone varchar(25) UNIQUE NOT NULL,
-    password varchar(25) NOT NULL,
+    password text NOT NULL,
     userRole varchar(25) NOT NULL DEFAULT 'client',
 	createddate timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP
 )"""
@@ -35,9 +35,4 @@ table4 = """CREATE TABLE IF NOT EXISTS tbl_auth_tokens(
 	createddate timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP
 )"""
 
-data1 = """ SELECT*FROM tbl_users;"""
-data2 = """ SELECT*FROM tbl_orders;"""
-data3 = """ SELECT*FROM tbl_foods;"""
-
 queries = [table1, table2, table3, table4]
-foods = [data1, data2, data3]

@@ -6,7 +6,6 @@ from flask import jsonify, session, request, make_response
 from .database.conn import dbcon
 from app.jwt import Auth
 
-
 jwt_object = Auth()
 
 
@@ -48,16 +47,15 @@ class User(object):
                 username = user[1]
                 userrole = user[4]
                 token = jwt.encode({'userid': userid,
-                                'username': username, 'userrole': userrole,
-                                'exp': datetime.utcnow() + timedelta(minutes=30)},
-                                'SECRET_KEY', algorithm='HS256')
+                                        'username': username, 'userrole': userrole,
+                                        'exp': datetime.utcnow() + timedelta(minutes=30)},
+                                        'SECRET_KEY', algorithm='HS256')
                 #save token in tbl_auth_tokens
                 self.cur.execute("INSERT INTO tbl_auth_tokens(token)\
                 VALUES(%(token)s);", {'token': token})
                 self.conn.commit()
                 mssg = {"message": "You are successfully logged in",
                 "token": token.decode()}
-                #mssg['token'] = token
                 return jsonify(mssg), 200
         return jsonify({
             "message": "Wrong username or password"}), 403
