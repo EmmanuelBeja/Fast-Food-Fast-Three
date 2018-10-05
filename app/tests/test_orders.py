@@ -1,8 +1,24 @@
 """app/tests_orders.py"""
 import unittest
 import json
-from app import create_app, init_db
+from app import create_app
 from app.database.conn import dbcon
+from app.database.conn import init_db
+
+def create_admin():
+    """creating an admin user"""
+    conn = dbcon()
+    cur = conn.cursor()
+    #check if user exists
+    username = "Person"
+    cur.execute("SELECT * FROM tbl_users WHERE username=%(username)s",\
+    {'username': username})
+    if cur.rowcount > 0:
+        return False
+    cur.execute("INSERT INTO tbl_users(username, userphone, password, userrole)\
+    VALUES(%(username)s, %(userphone)s, %(password)s, %(userrole)s);",\
+    {'username': 'Person', 'userphone': '0712991425', 'password': "Pass123", 'userrole': 'admin'})
+    conn.commit()
 
 
 class TestOrders(unittest.TestCase):
@@ -12,43 +28,75 @@ class TestOrders(unittest.TestCase):
         app = create_app(config_name='testing')
         self.client = app.test_client()
 
-        self.register_user = json.dumps(dict(
-            username="useer",
-            userphone='0712991415',
-            password='Pass123',
-            userRole='admin',
-            confirmpass='Pass123'))
-
-        self.login = json.dumps(dict(username="useer", password='Pass123'))
+        self.login_admin = json.dumps(dict(
+            username="Person",
+            password='Pass123'))
 
         self.create_order = json.dumps(dict(
             food_id=1,
             client_id=1,
-            client_adress='Likoni',
+            client_adress='Likoni'))
+
+        self.create_order2 = json.dumps(dict(
+            food_id=1,
+            client_id=1,
+            client_adress='Kwale'))
+
+        self.create_order3 = json.dumps(dict(
+            food_id=1,
+            client_id=1,
+            client_adress='Mtwapa'))
+
+        self.edit_order = json.dumps(dict(
+            food_id=3,
+            client_id=1,
+            client_adress='Kwale',
             status='pending'))
 
-        self.signupuser = self.client.post(
-            '/v2/auth/signup',
-            data=self.register_user,
-            content_type='application/json')
-
-        self.client.post(
+        create_admin()
+        resource = self.client.post(
             '/v2/auth/login',
-            data=self.login,
+            data=self.login_admin,
             content_type='application/json')
+        data = json.loads(resource.data.decode())
+        self.headers = {'Authorization': 'Bearer ' +data['token']}
 
         self.client.post(
             '/v2/users/orders',
-            data=self.create_order,
-            content_type='application/json')
+            data=self.create_order, content_type='application/json', headers=self.headers)
+        data = json.loads(resource.data.decode())
 
+        self.client.post(
+            '/v2/users/orders',
+            data=self.create_order2, content_type='application/json', headers=self.headers)
+        data = json.loads(resource.data.decode())
+
+        self.client.post(
+            '/v2/users/orders',
+            data=self.create_order3, content_type='application/json', headers=self.headers)
+        data = json.loads(resource.data.decode())
 
     def test_order_creation(self):
         """ Test for order creation """
         resource = self.client.post(
             '/v2/users/orders',
-            data=self.create_order,
-            content_type='application/json')
+            data=self.create_order, content_type='application/json', headers=self.headers)
+        data = json.loads(resource.data.decode())
+        self.assertEqual(resource.status_code, 201)
+        self.assertEqual(resource.content_type, 'application/json')
+        self.assertEqual(data['message'].strip(), 'Successful. Order created.')
+
+        resource = self.client.post(
+            '/v2/users/orders',
+            data=self.create_order2, content_type='application/json', headers=self.headers)
+        data = json.loads(resource.data.decode())
+        self.assertEqual(resource.status_code, 201)
+        self.assertEqual(resource.content_type, 'application/json')
+        self.assertEqual(data['message'].strip(), 'Successful. Order created.')
+
+        resource = self.client.post(
+            '/v2/users/orders',
+            data=self.create_order3, content_type='application/json', headers=self.headers)
         data = json.loads(resource.data.decode())
         self.assertEqual(resource.status_code, 201)
         self.assertEqual(resource.content_type, 'application/json')
@@ -59,8 +107,7 @@ class TestOrders(unittest.TestCase):
         """ Test for getting all orders """
         resource = self.client.get(
             '/v2/orders/',
-            data=json.dumps(dict()),
-            content_type='application/json')
+            data=json.dumps(dict()), content_type='application/json', headers=self.headers)
         data = json.loads(resource.data.decode())
         self.assertEqual(resource.status_code, 200)
         self.assertEqual(resource.content_type, 'application/json')
@@ -69,7 +116,7 @@ class TestOrders(unittest.TestCase):
 
     def test_get_order_by_order_id(self):
         """ Test for getting specific orders """
-        resource = self.client.get('/v2/orders/1')
+        resource = self.client.get('/v2/orders/1', content_type='application/json', headers=self.headers)
         data = json.loads(resource.data.decode())
         self.assertEqual(resource.status_code, 200)
         self.assertEqual(data['message'].strip(), 'Successful. Order found.')
@@ -78,29 +125,12 @@ class TestOrders(unittest.TestCase):
     def test_order_can_be_edited(self):
         """ test order can be edited """
         resource = self.client.put(
-            '/v2/orders/1',
-            data=self.create_order,
-            content_type='application/json')
+            '/v2/orders/3',
+            data=self.edit_order, content_type='application/json', headers=self.headers)
         data = json.loads(resource.data.decode())
         self.assertEqual(resource.status_code, 201)
         self.assertEqual(resource.content_type, 'application/json')
         self.assertEqual(data['message'].strip(), 'Update Successful.')
-
-
-    def test_order_deletion(self):
-        """Test API can delete an existing order. (DELETE request)."""
-        resource = self.client.delete('/v2/orders/1')
-        data = json.loads(resource.data.decode())
-        self.assertEqual(resource.status_code, 201)
-        self.assertEqual(data['message'].strip(), 'Delete Successful.')
-
-
-    def tearDown(self):
-        conn = dbcon()
-        cur = conn.cursor()
-        cur.execute("DELETE FROM tbl_users;")
-        conn.commit()
-        init_db()
 
 if __name__ == '__main__':
     unittest.main()

@@ -27,4 +27,17 @@ table3 = """CREATE TABLE IF NOT EXISTS tbl_foods(
 	createddate timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP
 )"""
 
-queries = [table1, table2, table3]
+table4 = """CREATE TABLE IF NOT EXISTS tbl_auth_tokens(
+	token_id serial PRIMARY KEY,
+	token text  NOT NULL,
+    status varchar(25) NOT NULL DEFAULT 'active',
+	blacklist_dy varchar(25) DEFAULT NULL,
+	createddate timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP
+)"""
+
+data1 = """ SELECT*FROM tbl_users;"""
+data2 = """ SELECT*FROM tbl_orders;"""
+data3 = """ SELECT*FROM tbl_foods;"""
+
+queries = [table1, table2, table3, table4]
+foods = [data1, data2, data3]
