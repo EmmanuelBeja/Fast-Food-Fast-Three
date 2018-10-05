@@ -1,0 +1,10 @@
+{
+  "app/tests/test_auth.py::TestAuth::test_edit_user_not_found": true,
+  "app/tests/test_auth.py::TestAuth::test_username_exist": true,
+  "app/tests/test_auth.py::TestAuth::test_wrong_login_details": true,
+  "app/tests/test_food.py::TestOrders::test_get_all_orders": true,
+  "app/tests/test_food.py::TestOrders::test_get_order_by_order_id": true,
+  "app/tests/test_food.py::TestOrders::test_order_can_be_edited": true,
+  "app/tests/test_food.py::TestOrders::test_order_creation": true,
+  "app/tests/test_orders.py::TestOrders::test_order_deletion": true
+}

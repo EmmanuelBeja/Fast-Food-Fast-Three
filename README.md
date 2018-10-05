@@ -7,7 +7,7 @@
 
   To interact with the api endpoints, visit the link and add endpoints [here](https://emmanuelbeja-fast-food-fast.herokuapp.com/)<br>
 
-  API documentation [here](https://documenter.getpostman.com/view/5399899/RWaPv6zH)
+  API documentation [here](https://fastfoodfastchallenge3.docs.apiary.io)
 
   ## Use the following endpoints to perform the specified tasks
 
