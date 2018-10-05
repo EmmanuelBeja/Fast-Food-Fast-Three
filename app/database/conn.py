@@ -3,7 +3,7 @@ import os
 import psycopg2
 
 
-from .create_table import queries
+from .create_table import queries, foods
 
 def dbcon():
     """db connection"""
@@ -22,6 +22,7 @@ def init_db():
         for query in queries:
             cursor.execute(query)
         connection.commit()
+
 
     except (Exception, psycopg2.DatabaseError) as error:
         print("DB Error")
