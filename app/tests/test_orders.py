@@ -2,23 +2,7 @@
 import unittest
 import json
 from app import create_app
-from app.database.conn import dbcon
-from app.database.conn import init_db
-
-def create_admin():
-    """creating an admin user"""
-    conn = dbcon()
-    cur = conn.cursor()
-    #check if user exists
-    username = "Person"
-    cur.execute("SELECT * FROM tbl_users WHERE username=%(username)s",\
-    {'username': username})
-    if cur.rowcount > 0:
-        return False
-    cur.execute("INSERT INTO tbl_users(username, userphone, password, userrole)\
-    VALUES(%(username)s, %(userphone)s, %(password)s, %(userrole)s);",\
-    {'username': 'Person', 'userphone': '0712991425', 'password': "Pass123", 'userrole': 'admin'})
-    conn.commit()
+from app.database.conn import dbcon, create_admin
 
 
 class TestOrders(unittest.TestCase):
@@ -59,7 +43,7 @@ class TestOrders(unittest.TestCase):
             data=self.login_admin,
             content_type='application/json')
         data = json.loads(resource.data.decode())
-        self.headers = {'Authorization': 'Bearer ' +data['token']}
+        self.headers = {'Authorization': 'Bearer ' + data['token']}
 
         self.client.post(
             '/v2/users/orders',

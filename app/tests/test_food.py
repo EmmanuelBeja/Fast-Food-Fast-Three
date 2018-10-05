@@ -2,24 +2,8 @@
 import unittest
 import json
 from app import create_app
-from app.database.conn import dbcon
-from app.database.conn import init_db
+from app.database.conn import dbcon, create_admin
 
-
-def create_admin():
-    """creating an admin user"""
-    conn = dbcon()
-    cur = conn.cursor()
-    #check if user exists
-    username = "Person"
-    cur.execute("SELECT * FROM tbl_users WHERE username=%(username)s",\
-    {'username': username})
-    if cur.rowcount > 0:
-        return False
-    cur.execute("INSERT INTO tbl_users(username, userphone, password, userrole)\
-    VALUES(%(username)s, %(userphone)s, %(password)s, %(userrole)s);",\
-    {'username': 'Person', 'userphone': '0712991425', 'password': "Pass123", 'userrole': 'admin'})
-    conn.commit()
 
 class TestFood(unittest.TestCase):
     """ Tests for the Orders """
