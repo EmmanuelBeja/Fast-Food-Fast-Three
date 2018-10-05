@@ -3,7 +3,7 @@ import os
 import psycopg2
 
 
-from .create_table import queries, foods
+from .create_table import queries
 
 def dbcon():
     """db connection"""
@@ -23,7 +23,25 @@ def init_db():
             cursor.execute(query)
         connection.commit()
 
+        create_admin()
+
 
     except (Exception, psycopg2.DatabaseError) as error:
         print("DB Error")
         print(error)
+
+def create_admin():
+    """creating an admin user"""
+    conn = dbcon()
+    cur = conn.cursor()
+    #check if user exists
+    username = "Person"
+    password = 'Pass123'
+    cur.execute("SELECT * FROM tbl_users WHERE username=%(username)s",\
+    {'username': username})
+    if cur.rowcount > 0:
+        return False
+    cur.execute("INSERT INTO tbl_users(username, userphone, password, userrole)\
+    VALUES(%(username)s, %(userphone)s, %(password)s, %(userrole)s);",\
+    {'username': 'Person', 'userphone': '0712991425', 'password': password, 'userrole': 'admin'})
+    conn.commit()
