@@ -162,13 +162,31 @@ class Order(object):
     def create_order(self, food_id, client_id, client_adress):
         """Create order_item"""
         status = 'pending'
-        self.cur.execute("INSERT INTO  tbl_orders(food_id, client_id, client_adress, status)\
-        VALUES(%(food_id)s, %(client_id)s, %(client_adress)s, %(status)s);",
-                         {'food_id': food_id, 'client_id': client_id,\
-                         'client_adress': client_adress,\
-                          'status': status})
-        self.conn.commit()
-        return jsonify({"message": "Successful. Order created."}), 201
+        if self.check_food_availability(food_id) is True:
+            #Check if user had ordered this food earlier
+            status = 'pending'
+            self.cur.execute("SELECT * FROM tbl_orders WHERE food_id=%(food_id)s\
+            and client_id=%(client_id)s and status=%(status)s",
+                             {'food_id': food_id, 'client_id': client_id, 'status': status})
+            if self.cur.rowcount > 0:
+                rows = self.cur.fetchone()
+                print(rows)
+                order_id = rows[0]
+                quantity = int(rows[4]) + 1
+                self.cur.execute(
+                    "UPDATE tbl_orders SET quantity=%s WHERE order_id=%s",
+                    (quantity,
+                     order_id))
+                self.conn.commit()
+                return jsonify({"message": "Successful. Order created."}), 201
+            self.cur.execute("INSERT INTO  tbl_orders(food_id, client_id, client_adress, status)\
+            VALUES(%(food_id)s, %(client_id)s, %(client_adress)s, %(status)s);",
+                             {'food_id': food_id, 'client_id': client_id,\
+                             'client_adress': client_adress,\
+                              'status': status})
+            self.conn.commit()
+            return jsonify({"message": "Successful. Order created."}), 201
+        return jsonify({"message": "Sorry. Food not in the menu"}), 200
 
     def get_orders(self):
         """ get all Orders """
@@ -186,26 +204,25 @@ class Order(object):
                 "message": "Successful. Orders Found.",
                 "Orders": self.result}), 200
         return jsonify({
-            "message": "No Order."}), 400
+            "message": "No Order."}), 200
 
     def get_order(self, order_id):
         """ get Order """
         self.cur.execute("SELECT * FROM tbl_orders WHERE order_id=%(order_id)s",
                          {'order_id': order_id})
         if self.cur.rowcount > 0:
-            rows = self.cur.fetchall()
-            for order in rows:
-                self.orderlist.update({
-                    'order_id': order[0],
-                    'food_id': order[1],
-                    'client_id': order[2],
-                    'client_adress': order[3]})
-                self.result.append(dict(self.orderlist))
+            rows = self.cur.fetchone()
+            self.orderlist.update({
+                'order_id': rows[0],
+                'food_id': rows[1],
+                'client_id': rows[2],
+                'client_adress': rows[3]})
+            self.result.append(dict(self.orderlist))
             return jsonify({
                 "message": "Successful. Order found.",
                 "Orders": self.result}), 200
         return jsonify({
-            "message": "No Order."}), 400
+            "message": "No Order."}), 200
 
     def get_user_orders(self, client_id):
         self.cur.execute("SELECT * FROM tbl_orders WHERE client_id=%(client_id)s",
@@ -223,7 +240,7 @@ class Order(object):
                 "message": "Successful. User orders found.",
                 "Orders": self.result}), 200
         return jsonify({
-            "message": "No Order."}), 400
+            "message": "No Order."}), 200
 
     def update_order(
             self,
@@ -235,7 +252,7 @@ class Order(object):
         """ update Order """
         self.cur.execute("SELECT * FROM tbl_orders WHERE order_id=%(order_id)s",
                          {'order_id': order_id})
-        rows = self.cur.fetchall()
+        rows = self.cur.fetchone()
         if self.cur.rowcount > 0:
             # update this order details
             self.cur.execute(
@@ -248,15 +265,14 @@ class Order(object):
                  order_id))
             self.conn.commit()
 
-            for order in rows:
-                self.orderlist.update({
-                    'order_id': order[0],
-                    'food_id': order[1],
-                    'client_id': order[2],
-                    'client_adress': order[3]})
-                return jsonify({
-                    "message": "Update Successful.",
-                    "Order": self.orderlist}), 201
+            self.orderlist.update({
+                'order_id': rows[0],
+                'food_id': rows[1],
+                'client_id': rows[2],
+                'client_adress': rows[3]})
+            return jsonify({
+                "message": "Update Successful.",
+                "Order": self.orderlist}), 201
         return jsonify({"message": "No Order."}), 400
 
     def delete_order(self, order_id):
@@ -270,7 +286,15 @@ class Order(object):
                     'order_id': order_id})
             self.conn.commit()
             return jsonify({"message": "Delete Successful."}), 201
-        return jsonify({"message": "No Order."}), 400
+        return jsonify({"message": "No Order."}), 200
+
+    def check_food_availability(self, food_id):
+        """check if food is available in menu"""
+        self.cur.execute("SELECT * FROM tbl_foods WHERE food_id=%(food_id)s",\
+        {'food_id': food_id})
+        if self.cur.rowcount > 0:
+            return True
+        return False
 
 
 class Food(object):
@@ -320,7 +344,7 @@ class Food(object):
             WHERE food_id=%s", (food_name, food_price, food_image, food_id))
             self.conn.commit()
             return jsonify({"message": "Update Successful"}), 201
-        return jsonify({"message": "No Food."}), 400
+        return jsonify({"message": "No Food."}), 200
 
     def get_food(self, food_id):
         """ get specific Food """
@@ -338,7 +362,7 @@ class Food(object):
                 "message": "Successful. Food Found",
                 "Foods": self.foodlist}), 200
         return jsonify({
-            "message": "No Food."}), 400
+            "message": "No Food."}), 200
 
     def delete_food(self, food_id):
         """ delete Food """
@@ -352,4 +376,4 @@ class Food(object):
             self.conn.commit()
             return jsonify({
                 "message": "Delete Successful."}), 201
-        return jsonify({"message": "No Food."}), 400
+        return jsonify({"message": "No Food."}), 200

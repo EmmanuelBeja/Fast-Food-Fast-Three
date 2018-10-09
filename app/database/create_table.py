@@ -14,6 +14,7 @@ table2 = """CREATE TABLE IF NOT EXISTS tbl_orders(
 	food_id int NOT NULL,
     client_id int NOT NULL,
 	client_adress varchar(25) NOT NULL,
+	quantity varchar(25) NOT NULL DEFAULT '1',
     status varchar(25) NOT NULL,
 	createddate timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP
 )"""
