@@ -41,22 +41,21 @@ class User(object):
         self.cur.execute("SELECT * FROM tbl_users WHERE username=%(username)s\
         AND password=%(password)s", {'username': username, 'password': password})
         if self.cur.rowcount > 0:
-            rows = self.cur.fetchall()
-            for user in rows:
-                userid = user[0]
-                username = user[1]
-                userrole = user[4]
-                token = jwt.encode({'userid': userid,
-                                        'username': username, 'userrole': userrole,
-                                        'exp': datetime.utcnow() + timedelta(minutes=30)},
-                                        'SECRET_KEY', algorithm='HS256')
-                #save token in tbl_auth_tokens
-                self.cur.execute("INSERT INTO tbl_auth_tokens(token)\
-                VALUES(%(token)s);", {'token': token})
-                self.conn.commit()
-                mssg = {"message": "You are successfully logged in",
-                "token": token.decode()}
-                return jsonify(mssg), 200
+            rows = self.cur.fetchone()
+            userid = rows[0]
+            username = rows[1]
+            userrole = rows[4]
+            token = jwt.encode({'userid': userid,
+                                    'username': username, 'userrole': userrole,
+                                    'exp': datetime.utcnow() + timedelta(minutes=30)},
+                                    'SECRET_KEY', algorithm='HS256')
+            #save token in tbl_auth_tokens
+            self.cur.execute("INSERT INTO tbl_auth_tokens(token)\
+            VALUES(%(token)s);", {'token': token})
+            self.conn.commit()
+            mssg = {"message": "You are successfully logged in",
+            "token": token.decode()}
+            return jsonify(mssg), 200
         return jsonify({
             "message": "Wrong username or password"}), 403
 
@@ -65,16 +64,15 @@ class User(object):
         self.cur.execute(
             "SELECT * FROM tbl_users WHERE userid=%(userid)s", {'userid': id})
         if self.cur.rowcount > 0:
-            rows = self.cur.fetchall()
-            for user in rows:
-                self.userlist.update({
-                    'user_id': user[0],
-                    'username': user[1],
-                    'userRole': user[4],
-                    'userPhone': user[2]})
-                return jsonify({
-                    "message": "Successful. User Found.",
-                    "user": self.userlist}), 200
+            rows = self.cur.fetchone()
+            self.userlist.update({
+                'user_id': rows[0],
+                'username': rows[1],
+                'userRole': rows[4],
+                'userPhone': rows[2]})
+            return jsonify({
+                "message": "Successful. User Found.",
+                "user": self.userlist}), 200
         return jsonify({"message": "user does not exist"}), 400
 
     def get_users(self):
@@ -351,13 +349,12 @@ class Food(object):
         self.cur.execute(
             "SELECT * FROM tbl_foods WHERE food_id=%(food_id)s", {'food_id': food_id})
         if self.cur.rowcount > 0:
-            rows = self.cur.fetchall()
-            for food in rows:
-                self.foodlist.update({
-                    'food_id': food[0],
-                    'food_name': food[1],
-                    'food_price': food[2],
-                    'food_image': food[3]})
+            rows = self.cur.fetchone()
+            self.foodlist.update({
+                'food_id': rows[0],
+                'food_name': rows[1],
+                'food_price': rows[2],
+                'food_image': rows[3]})
             return jsonify({
                 "message": "Successful. Food Found",
                 "Foods": self.foodlist}), 200
