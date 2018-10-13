@@ -2,8 +2,8 @@
 
 table1 = """CREATE TABLE IF NOT EXISTS tbl_users(
 	userid  serial PRIMARY KEY,
-	username varchar(25) UNIQUE NOT NULL,
-    userphone varchar(25) UNIQUE NOT NULL,
+	username varchar(25) NOT NULL,
+    userphone varchar(25) NOT NULL,
     password text NOT NULL,
     userRole varchar(25) NOT NULL DEFAULT 'client',
 	createddate timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP

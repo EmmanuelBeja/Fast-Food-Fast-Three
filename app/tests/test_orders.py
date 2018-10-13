@@ -13,15 +13,12 @@ class TestOrders(unittest.TestCase):
         self.client = app.test_client()
 
         self.create_order = json.dumps(dict(
-            food_id=3,
             client_adress='Likoni'))
 
         self.create_order2 = json.dumps(dict(
-            food_id=4,
             client_adress='Kwale'))
 
         self.create_order3 = json.dumps(dict(
-            food_id=3,
             client_adress='Mtwapa'))
 
         self.edit_order = json.dumps(dict(
@@ -40,6 +37,13 @@ class TestOrders(unittest.TestCase):
             content_type='application/json')
         data = json.loads(resource.data.decode())
         self.headers = {'Authorization': 'Bearer ' +data['token']}
+
+    def test_add_to_cart(self):
+        resource = self.client.get(
+            '/v2/users/pick_food/2',
+            data=json.dumps(dict()), headers=self.headers)
+        self.assertEqual(resource.status_code, 200)
+
 
     def test_order_creation(self):
         """ Test for order creation """
@@ -88,7 +92,6 @@ class TestOrders(unittest.TestCase):
         data = json.loads(resource.data.decode())
         self.assertEqual(resource.status_code, 200)
         self.assertEqual(resource.content_type, 'application/json')
-        self.assertEqual(data['message'].strip(), 'Successful. Orders Found.')
 
 
     def test_get_order_by_order_id(self):
@@ -100,8 +103,21 @@ class TestOrders(unittest.TestCase):
 
     def test_order_can_be_edited(self):
         """ test order can be edited """
+        resource = self.client.get(
+            '/v2/users/pick_food/2',
+            data=json.dumps(dict()), headers=self.headers)
+        self.assertEqual(resource.status_code, 200)
+
+        self.client.post(
+            '/v2/users/orders',
+            data=self.create_order,
+            content_type='application/json', headers=self.headers)
+        self.client.post(
+            '/v2/users/orders',
+            data=self.create_order2,
+            content_type='application/json', headers=self.headers)
         resource = self.client.put(
-            '/v2/orders/2',
+            '/v2/orders/1',
             data=self.edit_order,
             content_type='application/json', headers=self.headers)
         data = json.loads(resource.data.decode())
