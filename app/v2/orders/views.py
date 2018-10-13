@@ -1,7 +1,7 @@
 """/app/v1/orders/views.py"""
 from functools import wraps
 import jwt
-from flask import request, jsonify, session
+from flask import request, jsonify, session, render_template
 from . import orders_api
 from app.models import Order
 from app.jwt import Auth
@@ -115,21 +115,42 @@ def validate_update_data(data):
 def order():
     """ Place an order for food."""
     data = request.get_json()
-    print(data)
-
-    food_id = data['food_id']
+    #food_id = data['food_id']
     client_id = get_logged_in_user_id()
     client_adress = data['client_adress']
     response = orderObject.create_order(
-        food_id,
         client_id,
         client_adress)
     return response
 
 
+@orders_api.route('/users/pick_food/<int:food_id>', methods=["GET"])
+def pick_food(food_id):
+    """ Pick food in menu."""
+    #add food to a session dict with food id and quantity
+    response = orderObject.add_to_cart(food_id)
+    return render_template('user-home.html')
+
+
+@orders_api.route('/users/cart_quantity', methods=["GET"])
+def cart_quantity():
+    """ Get cart quantity."""
+    #return quantity session with food items picked
+    response = orderObject.cart_quantity()
+    return response
+
+
+@orders_api.route('/users/cart', methods=["GET"])
+def cart():
+    """ Get all picked food."""
+    #return quantity session with food items picked
+    response = orderObject.cart_details()
+    return response
+
+
 @orders_api.route('/orders/', methods=["GET"])
 @token_required
-def allorder():
+def all_order():
     """ Get all orders"""
     if is_admin_loggedin() is True:
         data = orderObject.get_orders()
@@ -170,10 +191,19 @@ def order_manipulation(order_id):
 
 @orders_api.route('/users/orders/<int:client_id>', methods=['GET'])
 @token_required
-def userorders(client_id):
+def user_orders(client_id):
     """ Get the order history for a particular user."""
     if is_admin_loggedin() is True:
         res = orderObject.get_user_orders(client_id)
         return res
     return jsonify({
         "message": "You dont have admin priviledges."}), 401
+
+
+@orders_api.route('/users/orders', methods=['GET'])
+@token_required
+def logged_in_user_orders():
+    """ Get logged in user order history."""
+    client_id = get_logged_in_user_id()
+    res = orderObject.get_user_orders(client_id)
+    return res

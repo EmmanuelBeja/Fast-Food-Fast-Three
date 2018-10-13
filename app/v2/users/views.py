@@ -26,6 +26,12 @@ def is_admin_loggedin():
         return True
     return False
 
+def get_logged_in_user_id():
+    header = request.headers.get('authorization')
+    token = header.split(" ")[1]
+    token = jwt.decode(token, 'SECRET_KEY', algorithms=['HS256'])
+    user_id = token['userid']
+    return user_id
 
 def token_required(f):
     """check"""
@@ -162,7 +168,27 @@ def users():
         "message": "You dont have admin priviledges."}), 401
 
 
-@users_api.route('/users/<int:id>', methods=["GET", "DELETE", "PUT"])
+@users_api.route('/users', methods=["PUT"])
+@token_required
+def edit_profile():
+    """edit user profile"""
+    data = request.get_json()
+    res = validate_data_signup(data)
+    if res == "valid":
+        userid = get_logged_in_user_id()
+        username = data['username']
+        userphone = data['userphone']
+        password = data['password']
+        response = userObject.update_user(
+            userid,
+            username,
+            userphone,
+            password)
+        return response
+    return jsonify({"message": res}), 400
+
+
+@users_api.route('/users/<int:id>', methods=["GET", "DELETE"])
 @token_required
 def users_verbs(id):
     """run http verbs"""
@@ -170,21 +196,6 @@ def users_verbs(id):
         if request.method == "GET":
             data = userObject.get_specific_user(id)
             return data
-        elif request.method == "PUT":
-            data = request.get_json()
-            res = validate_data_signup(data)
-
-            if res == "valid":
-                username = data['username']
-                userphone = data['userphone']
-                password = data['password']
-                response = userObject.update_user(
-                    id,
-                    username,
-                    userphone,
-                    password)
-                return response
-            return jsonify({"message": res}), 400
         elif request.method == "DELETE":
             response = userObject.delete_user(id)
             return response
@@ -203,4 +214,4 @@ def logout():
     res = jwt_auth.blacklist(token)
     if res is True:
         return jsonify({"message": "Succefuly logout."}), 200
-    print(res)
+    return res
