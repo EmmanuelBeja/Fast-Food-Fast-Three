@@ -1,0 +1,675 @@
+body{
+  background-color: #eaeaea;
+  margin: 0px;
+  line-height: 1.4;
+  font-family: "Times New Roman", Times, serif;
+  font-size: 18px;
+  letter-spacing: 0.5px;
+  font-weight: 400;
+	color: #333;
+}
+
+section{
+	margin: 40px auto;
+  height: 480px;
+}
+
+
+a{
+  text-decoration: none;
+  color: teal;
+}
+
+img{
+  width:100%
+}
+
+.word-center{
+  text-align:center;
+}
+
+.word-right{
+  text-align: right;
+  display: block;
+}
+
+.accepted{
+  color: green!important;
+}
+
+.declined{
+  color: red!important;
+}
+
+.completed{
+  color: blue!important;
+}
+
+.modal {
+display: block;
+width: 600px;
+max-width: 100%;
+height: 400px;
+max-height: 100%;
+position: fixed;
+z-index: 1000;
+left: 50%;
+top: 50%;
+transform: translate(-50%, -50%);
+background: white;
+box-shadow: 0 0 60px 10px rgba(0, 0, 0, 0.9);
+border-radius: 4px;
+}
+.closed {
+display: none;
+}
+
+.modal-overlay {
+position: fixed;
+top: 0;
+left: 0;
+width: 100%;
+height: 100%;
+z-index: 50;
+background: rgba(0, 0, 0, 0.6);
+}
+.modal-content {
+position: absolute;
+top: 0;
+left: 0;
+width: 90%;
+height: 100%;
+overflow: auto;
+padding: 20px 50px 20px 20px;
+}
+
+.modal h1{
+margin: 5px auto;
+}
+
+/***********************************
+Buttons start
+***********************************/
+.btn-normal{
+  border: 1px solid white;
+  border-radius: 5px;
+  background-color: transparent;
+  color: #333;
+  text-align: center;
+  text-decoration: none;
+	width: auto;
+}
+.btn-wide{
+  width: 100%!important;
+}
+.btn-orange{
+  border: 1px solid #ffa50073;
+  border-radius: 5px;
+  background-color: orange;
+  color: white;
+  text-align: center;
+  text-decoration: none;
+	width: auto;
+}
+.btn-brown {
+    border: 1px solid brown;
+    border-radius: 5px;
+    background-color: brown;
+    color: white;
+    text-align: center;
+    text-decoration: none;
+    width: auto;
+}
+.btn-green {
+    border: 1px solid green;
+    border-radius: 5px;
+    background-color: green;
+    color: white;
+    text-align: center;
+    text-decoration: none;
+    width: auto;
+}
+.btn-darkblue{
+  border: 1px solid #00008b9c;
+  border-radius: 5px;
+  background-color: darkblue;
+  color: white;
+  text-align: center;
+  text-decoration: none;
+  width: auto;
+}
+.btn-lightblue{
+  border: 1px solid #add8e6a8;
+  border-radius: 5px;
+  background-color: lightblue;
+  color: white;
+  text-align: center;
+  text-decoration: none;
+  width: auto;
+}
+.btn-maroon{
+  border: 1px solid #8000007a;
+  border-radius: 5px;
+  background-color: maroon;
+  color: white;
+  text-align: center;
+  text-decoration: none;
+  width: auto;
+}
+.btn-small{
+	padding: 4px 10px!important;
+}
+.btn-large{
+	padding: 5px 12px!important;
+}
+/***********************************
+Button End
+***********************************/
+
+.container{
+	width:96%;
+  margin:20px auto;
+  overflow:hidden;
+}
+.input{
+  display: block;
+  width: 100%;
+  height: 20px;
+  padding: 7px 13px;
+  font-size: 15px;
+  border-radius: 5px;
+  border: 1px solid #abaaaa;
+}
+.panel{
+  border: 1px solid #3e3e3e3e;
+  background-color: white;
+	height: 100%;
+	margin:20px;
+	padding: 20px;
+	border-radius: 4px;
+}
+.form{
+  margin:0 20px 0 0;
+}
+
+.form h4{
+  margin:5px auto;
+}
+
+
+
+/***********************************
+Navbar Start
+***********************************/
+.navbar-default {
+    background-color: transparent;
+	  border: 0px;
+    padding: 5px 0;
+    transition: all 0.3s;
+}
+
+.navbar-white {
+    background-color: white;
+	  border: 0px;
+    padding: 5px 0;
+    transition: all 0.3s;
+    border-bottom: 1px solid whitesmoke;
+}
+
+.navbar-brand {
+	  color: white;
+    font-size: 36px;
+    font-family: "Times New Roman", Times, serif;
+}
+
+.navbar-white .navbar-brand{
+  color: #333;
+  font-size: 36px;
+  font-family: "Times New Roman", Times, serif;
+}
+.navbar-brand-responsive{
+  display: none;
+}
+.navbar-default .navbar-brand:hover, .navbar-default .navbar-brand:focus {
+    color: orange;
+    outline: none;
+}
+.navbar-white .navbar-brand:hover, .navbar-white .navbar-brand:focus {
+    color: teal;
+    outline: none;
+}
+.nav-container{
+  display:grid;
+  grid-template-columns: 50% 50%;
+  grid-column-gap: 0em;
+  margin: auto 40px;
+}
+ul.nav-right {
+  right:0;
+  list-style-type: none;
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+}
+ul.nav-right li {
+  float: right;
+  margin: 10px 5px;
+}
+ul.nav-right > li > a{
+	display: block;
+	font-weight: 400;
+	color: #fff;
+  outline: none;
+  padding: 0px 5px;
+}
+.navbar-white ul.nav-right > li > a{
+	display: block;
+	font-weight: 400;
+	color: #333;
+  outline: none;
+  padding: 0px 5px;
+}
+ul.nav-right > li > a:focus, .navbar-default .nav-right > li > a:hover {
+  color: orange;
+  background-color: transparent;
+}
+ul.nav-right > li > a:focus, .navbar-white .nav-right > li > a:hover {
+  color: teal;
+  background-color: transparent;
+}
+.navbar-default .nav-right > .active > a, .navbar-default .nav-right > .active > a:focus, .navbar-default .nav-right > .active > a:hover {
+  color: #fffde0;
+  background-color: transparent;
+}
+.navbar-white .nav-right > .active > a, .navbar-white .nav-right > .active > a:focus, .navbar-white .nav-right > .active > a:hover {
+  color: teal;
+  background-color: transparent;
+}
+.nav-top{
+  top: 0;
+}
+/***********************************
+Navbar End
+***********************************/
+
+/***********************************
+Header Start
+***********************************/
+.header{
+  position: relative;
+  min-height: 570px;
+  width: 100%;
+  background: url(../img/header.jpg) no-repeat fixed;
+  background-size: cover;
+}
+.bg-color{
+  background-color: RGBA(0, 0, 0, 0.67);
+  min-height: 570px;
+  width: 100%;
+  padding-bottom: 50px;
+}
+.index-container{
+  height: 100px;
+}
+.border-left-orange{
+  border-left: 4px solid orange;
+  padding: 20px;
+  margin-left: 20px;
+}
+.header-caption-head{
+  font-size: 30px;
+  padding: 0px 20px;
+  padding-top: 0px;
+  margin-top: 20px;
+  color: #eaeaea;
+}
+.header-caption-description{
+  font-size: 20px;
+  padding: 0px 20px;
+  color: #eaeaea;
+  margin: 20px auto;
+}
+/***********************************
+Header End
+***********************************/
+
+
+/***********************************
+Footer Start
+***********************************/
+.footer{
+	display: block;
+	padding: 35px;
+  bottom: 0;
+  background-color: white;
+  border-bottom: 4px solid teal;
+}
+/***********************************
+Footer End
+***********************************/
+
+.bottom-shadow {
+  -webkit-box-shadow: 0 3px 3px -3px black;
+  -moz-box-shadow: 0 3px 3px -3px black;
+  box-shadow: 0 3px 3px -3px black;
+}
+.cart-items{
+  position: absolute;
+  background: teal;
+  border-radius: 20px;
+  padding: 1px 5px;
+  font-size: x-small;
+  color: white;
+  margin: -5px auto 0 15px;
+}
+.nav-img-icons{
+  height:35px;
+  width:35px;
+}
+.user-avatar{
+  border-radius:50px
+}
+.food-panel{
+  border: 1px solid whitesmoke;
+  background-color: white;
+	height: 100%;
+	margin:20px;
+	padding: 0px;
+	border-radius: 4px;
+  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+}
+.food-panel-content{
+  padding: 0 20px
+}
+.food-image{
+  height: 200px;
+  padding: 0px -20px 0px -20px;
+}
+.price{
+  font-size: 15px;
+  color: #333;
+}
+
+.food-add-icon{
+  height: 20px;
+  width: 20px;
+  margin: auto auto -5px auto;
+}
+
+.span-add-to-cart{
+  display: flex;
+  margin: 7px auto;
+}
+
+
+.list-item{
+  display:block;
+  height:50px;
+  border-bottom: 1px solid whitesmoke;
+  margin-bottom: 2px;
+}
+.order-image{
+  width:40px;
+  height:40px;
+}
+.order-description{
+  text-align:right;
+}
+
+.panel h4{
+  margin:5px auto;
+}
+
+.hello-message{
+  margin: 20px;
+}
+.location-icon{
+  height: 20px;
+  width: 20px;
+  margin: auto auto -5px auto;
+}
+
+.btn-add-food{
+  margin: -40px 5px 0px auto;
+  display: table;
+}
+/**********************************
+Grid System Start
+***********************************/
+.box-row{
+ display: table;
+ padding: 2px;
+ position: relative;
+}
+.box-col-1 {
+	display: table-column;
+	width: 12.5%;
+  float: left;
+  position: inherit;
+}
+.box-col-2 {
+	display: table-column;
+	width: 25%;
+  float: left;
+  position:inherit;
+}
+.box-col-3 {
+	display: table-column;
+	width: 37.5%;
+  float: left;
+  position: inherit;
+}
+.box-col-4 {
+	display: table-column;
+	width: 50%;
+  float: left;
+  position:inherit;
+}
+.box-col-5 {
+	display: table-column;
+	width: 62.5%;
+  float: left;
+  position: inherit;
+}
+.box-col-6 {
+	display: table-column;
+	width: 75%;
+  float: left;
+  position:inherit;
+}
+.box-col-7 {
+	display: table-column;
+	width: 87.5%;
+  float: left;
+  position: inherit;
+}
+.box-col-8 {
+
+	display: table-column;
+	width: 100%;
+  float: left;
+  position: inherit;
+}
+/***********************************
+Grid System End
+***********************************/
+
+.featured{
+  background: white;
+  padding-top: 20px;
+  margin: 0px auto 50px auto;
+  border-radius: 5px;
+}
+
+
+.text-fit{
+  display: block;
+  width: 100%;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+/***********************************
+Responsive media queries Start
+***********************************/
+@media (min-width: 551px) and (max-width: 980px){
+  .featured{
+    background: white;
+    padding-top: 20px;
+    margin: 0px auto 10px auto;
+    border-radius: 5px;
+  }
+	.box-row{
+	 display: table;
+	 padding: 2px;
+	}
+	.border-left-orange {
+    border-left: 4px solid orange;
+    padding: 10px;
+  }
+	.box-col-1 {
+		display: table-column;
+		width: 50%;
+	}
+	.box-col-2 {
+		display: table-column;
+		width: 50%;
+	}
+	.box-col-3 {
+		display: table-column;
+		width: 100%;
+	}
+	.box-col-4 {
+		display: table-column;
+		width: 100%;
+	}
+	.box-col-5 {
+		display: table-column;
+		width: 100%;
+	}
+	.box-col-6 {
+		display: table-column;
+		width: 100%;
+	}
+	.box-col-7 {
+		display: table-column;
+		width: 100%;
+	}
+	.box-col-8 {
+		display: table-column;
+		width: 100%;
+	}
+
+  .navbar-brand{
+    display: none;
+  }
+  .navbar-brand-responsive{
+    display: contents;
+  }
+  .nav-container{
+    display:block;
+    margin: 10px auto;
+  }
+  ul.nav-right {
+    list-style-type: none;
+    margin: auto 10px;
+    padding: 0px auto;
+    overflow: hidden;
+  }
+  ul.nav-right li {
+    float: none;
+    text-align: center;
+    margin: 5px auto;
+  }
+
+  .list-item {
+    display: inline-table;
+    min-height: 50px;
+    border-bottom: 1px solid whitesmoke;
+    margin-bottom: 2px;
+    font-size: smaller;
+}
+}
+
+@media (min-width: 100px) and (max-width: 550px) {
+  .featured{
+    background: white;
+    padding-top: 20px;
+    margin: 0px auto 10px auto;
+    border-radius: 5px;
+  }
+	.box-row{
+	 display: table;
+	 padding: 2px;
+	}
+	.border-left-orange {
+    border-left: 4px solid orange;
+    padding: 10px;
+  }
+	.box-col-1 {
+		display: table-column;
+		width: 50%;
+	}
+	.box-col-2 {
+		display: table-column;
+		width: 50%;
+	}
+	.box-col-3 {
+		display: table-column;
+		width: 100%;
+	}
+	.box-col-4 {
+		display: table-column;
+		width: 100%;
+	}
+	.box-col-5 {
+		display: table-column;
+		width: 100%;
+	}
+	.box-col-6 {
+		display: table-column;
+		width: 100%;
+	}
+	.box-col-7 {
+		display: table-column;
+		width: 100%;
+	}
+	.box-col-8 {
+		display: table-column;
+		width: 100%;
+	}
+
+  .navbar-brand{
+    display: none;
+  }
+  .navbar-brand-responsive{
+    display: contents;
+  }
+  .nav-container{
+    display:block;
+    margin: 10px auto;
+  }
+  ul.nav-right {
+    list-style-type: none;
+    margin: auto 10px;
+    padding: 0px auto;
+    overflow: hidden;
+  }
+  ul.nav-right li {
+    float: none;
+    text-align: center;
+    margin: 5px auto;
+  }
+
+  .list-item {
+    display: inline-table;
+    min-height: 50px;
+    border-bottom: 1px solid whitesmoke;
+    margin-bottom: 2px;
+    font-size: smaller;
+}
+}
+
+/***********************************
+Responsive Media Queries end
+***********************************/

@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fast Food Fast</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+  </head>
+  <body>
+
+  <!-- header start-->
+  <div class="header">
+    <div class="bg-color">
+
+      <nav class="navbar-default nav-top">
+        <div class="nav-container">
+          <a class="navbar-brand" href="/">Fast Food Fast > Admin</a>
+
+          <ul class="nav-right">
+            <li class="navbar-brand-responsive"> <a href="/">Fast Food Fast > Admin</a></li>
+            <li><a href="/admin-profile" > <img src="{{ url_for('static', filename='img/avatar.png') }}" class="nav-img-icons user-avatar" alt=""> </a></li>
+            <li><a href="/admin-food" class="btn-normal btn-small">Food</a></li>
+            <li><a href="/admin-home" class="btn-normal btn-small">Home</a></li>
+          </ul>
+        </div>
+      </nav>
+
+       <section class="container featured box-row">
+             <div class="">
+               <h2 class="word-center">Orders</h2>
+             </div>
+
+             <div class="box-col-8">
+               <div class="hello-message">
+                 Hello Admin.
+               </div>
+
+               <div class="panel">
+                 <h4>Orders</h4>
+                 <div class="">
+                   <div class="list-item">
+                     <div class="box-col-2">
+                       <img src="{{ url_for('static', filename='img/chickenbiriani.jpg') }}" class="order-image" alt="">
+                     </div>
+                     <div class="box-col-6 order-description" >
+                       Chicken Biriani | Price: Ksh.350 | Qty: 1 Date: 12-8-2018 2:00pm
+
+                       <div class="box-col-8">
+                         <img src="{{ url_for('static', filename='img/location.png') }}" class="location-icon" alt="">
+                         Tudor, Mombasa. |
+                         By<i> Frank Johnes</i>
+                         <button type="button" class="btn-lightblue btn-small" name="button"> Accept</button>
+                         <button type="button" class="btn-maroon btn-small" name="button"> Decline</button>
+                         <button type="button" class="btn-green btn-small" name="button"> Complete</button>
+                       </div>
+                     </div>
+                   </div>
+                   <div class="list-item">
+                     <div class="box-col-2">
+                       <img src="{{ url_for('static', filename='img/frenchfries.jpg') }}" class="order-image" alt="">
+                     </div>
+                     <div class="box-col-6 order-description" >
+                       French Fries | Price: Ksh.150 | Qty: 1 Date: 15-8-2018 1:00pm
+
+                       <div class="box-col-8">
+                         <img src="{{ url_for('static', filename='img/location.png') }}" class="location-icon" alt="">
+                         Tudor, Mombasa. |
+                         By<i> Frank Johnes</i>
+                         <button type="button" class="btn-lightblue btn-small" name="button"> Accept</button>
+                         <button type="button" class="btn-maroon btn-small" name="button"> Decline</button>
+                         <button type="button" class="btn-green btn-small" name="button"> Complete</button>
+                       </div>
+                     </div>
+                     </div>
+                   </div>
+                 </div>
+
+               </div>
+             </div>
+
+       </section>
+
+    </div>
+  </div>
+  <!-- header end -->
+
+  <!-- footer start -->
+  <footer class="footer">
+      © Copyright. All Rights Reserved
+  </footer>
+  <!-- footer end -->
+
+  </body>
+</html>

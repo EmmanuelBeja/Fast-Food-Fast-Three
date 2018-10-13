@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fast Food Fast</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+  </head>
+  <body>
+
+  <!-- header start-->
+  <div class="header">
+    <div class="bg-color">
+
+      <nav class="navbar-default nav-top">
+        <div class="nav-container">
+          <a class="navbar-brand" href="/">Fast Food Fast</a>
+
+          <ul class="nav-right">
+            <li class="navbar-brand-responsive"> <a href="/">Fast Food Fast</a></li>
+            <li><a href="/signup" class="btn-orange btn-small">Signup</a></li>
+            <li><a href="/login" class="btn-normal btn-small">Login</a></li>
+          </ul>
+        </div>
+      </nav>
+
+      <section class="box-row container">
+         <div class="box-col-5 header-caption">
+           <div class="border-left-orange">
+             <div class="header-caption-head">
+                Hello! Welcome to Fast Food Fast.
+             </div>
+             <div class="header-caption-description">
+               Bringing good mood food to your hood.
+             </div>
+           </div>
+         </div>
+         <div class="box-col-3">
+           <div class="panel">
+             <div class="">
+               <div class="form">
+                 <h4 style="">Login</h4>
+                 <span id="message"></span>
+                 <div class="">
+                   <label for="username"> User Name</label>
+                   <input type="text" id="username" name="username" value="" class="input" placeholder="User Name" required>
+                 </div>
+                 <div class="">
+                   <label for="password"> Password</label>
+                   <input type="password" id="password" name="password" value="" class="input" placeholder="Password" required>
+                 </div>
+                 <br>
+                 <div class="">
+                   <button type="submit" name="button" onclick="login()" class="btn-orange btn-large btn-wide">Submit</button>
+                 </div>
+                 Don't have an account? <a href="/signup">Create Account</a>
+               </div>
+             </div>
+           </div>
+         </div>
+       </section>
+
+    </div>
+  </div>
+  <!-- header end -->
+
+  <!-- footer start -->
+  <footer class="footer">
+      © Copyright. All Rights Reserved
+  </footer>
+  <!-- footer end -->
+
+  </body>
+</html>
