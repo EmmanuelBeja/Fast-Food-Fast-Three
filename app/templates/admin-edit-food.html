@@ -83,5 +83,14 @@
   </footer>
   <!-- footer end -->
 
+  <script type="text/javascript">
+  //check if token was created/ user is logged in
+  if(!window.sessionStorage.getItem('token')){
+    location.replace("/");
+  }else {
+    token = window.sessionStorage.getItem('token');
+  }
+  </script>
+
   </body>
 </html>
