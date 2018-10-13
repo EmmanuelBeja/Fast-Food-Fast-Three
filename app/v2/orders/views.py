@@ -129,7 +129,7 @@ def pick_food(food_id):
     """ Pick food in menu."""
     #add food to a session dict with food id and quantity
     response = orderObject.add_to_cart(food_id)
-    return render_template('user-home.html')
+    return response
 
 
 @orders_api.route('/users/cart_quantity', methods=["GET"])
