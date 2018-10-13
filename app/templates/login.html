@@ -70,5 +70,48 @@
   </footer>
   <!-- footer end -->
 
+  <script type="text/javascript">
+
+  login = () => {
+    username = document.getElementById('username').value;
+    password = document.getElementById('password').value;
+
+    fetch('http://127.0.0.1:5000/v2/auth/login',
+    {
+      method: 'POST',
+      body: JSON.stringify({
+        username: username,
+        password: password
+      }),
+      mode: 'cors',
+      crossdomain: true,
+      headers: { 'Content-Type': 'application/json; charset=utf-8'}
+    })
+    .then(response => response.json())
+    .then(data => {
+      console.log(data)
+      message = document.getElementById('message');
+      message.style.backgroundColor = "#a0db8e";
+      message.style.borderLeft = "5px solid #fff8b6";
+      message.style.color = "white";
+      message.style.padding = "5px";
+      message.style.width = "100%";
+      message.style.borderRadius = "5px";
+      message.innerHTML = data.message;
+
+      token = data.token;
+      window.sessionStorage.setItem('token', token);
+
+      redirect = () => {
+        if(data.message=='You are successfully logged in') {
+           location.replace("/menu");
+         }
+      }
+
+      setTimeout( redirect,1000);
+    })
+  }
+
+  </script>
   </body>
 </html>
