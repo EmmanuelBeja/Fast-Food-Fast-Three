@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fast Food Fast</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+  </head>
+  <body>
+
+  <!-- header start-->
+  <div class="header">
+    <div class="bg-color">
+
+      <nav class="navbar-default nav-top">
+        <div class="nav-container">
+          <a class="navbar-brand" href="/">Fast Food Fast</a>
+
+          <ul class="nav-right">
+            <li class="navbar-brand-responsive"> <a href="/">Fast Food Fast</a></li>
+            <li><a href="/profile" > <img src="{{ url_for('static', filename='img/avatar.png') }}" class="nav-img-icons user-avatar" alt=""> </a></li>
+            <li><a href="/order" > <span class="cart-items" id="cart"></span> <img src="{{ url_for('static', filename='img/carticon.png') }}" class="nav-img-icons" alt=""> </a></li>
+            <li><a href="/order">Ksh.<span id="cart_total_price"></span> </a></li>
+            <li><a href="/history" class="btn-normal btn-small">History</a></li>
+            <li><a href="/menu" class="btn-normal btn-small">Menu</a></li>
+          </ul>
+        </div>
+      </nav>
+
+       <section class="container featured box-row">
+             <div class="">
+               <h2 class="word-center">Edit Profile</h2>
+             </div>
+
+             <div class="box-col-8">
+               <div class="panel">
+                 <div class="">
+                  <div class="form">
+                    <span id="message"></span>
+                    <div class="">
+                      <label for="userName">User Name</label>
+                      <input type="text" name="username" value="" class="input" id="username" placeholder="User Name" required>
+                    </div>
+                    <div class="">
+                      <label for="userphone"> User Phone</label>
+                      <input type="text" name="userphone" value="" class="input" id="userphone" placeholder="Phone Number" required>
+                    </div>
+                    <div class="">
+                      <label for="password"> Password</label>
+                      <input type="password" name="password" value="" class="input" id="password" placeholder="Password" required>
+                    </div>
+                    <div class="">
+                      <label for="confirmpass"> Confirm Password</label>
+                      <input type="password" name="confirmpass" value="" class="input" id="confirmpass" placeholder="Confirm Password" required>
+                    </div>
+                    <br>
+                    <div class="">
+                      <button type="submit" name="button" onclick="editprofile()" class="btn-orange btn-large btn-wide">Submit</button>
+                    </div>
+                  </div>
+                 </div>
+               </div>
+             </div>
+
+       </section>
+
+    </div>
+  </div>
+  <!-- header end -->
+
+  <!-- footer start -->
+  <footer class="footer">
+      © Copyright. All Rights Reserved
+  </footer>
+  <!-- footer end -->
+
+  </body>
+</html>

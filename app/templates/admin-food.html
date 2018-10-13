@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fast Food Fast</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+  </head>
+  <body>
+
+  <!-- header start-->
+  <div class="header">
+    <div class="bg-color">
+
+      <nav class="navbar-default nav-top">
+        <div class="nav-container">
+          <a class="navbar-brand" href="/">Fast Food Fast > Admin</a>
+
+          <ul class="nav-right">
+            <li class="navbar-brand-responsive"> <a href="/">Fast Food Fast</a> </li>
+            <li><a href="/admin-profile" > <img src="{{ url_for('static', filename='img/avatar.png') }}" class="nav-img-icons user-avatar" alt=""> </a></li>
+            <li><a href="/admin-food" class="btn-normal btn-small">Food</a></li>
+            <li><a href="/admin-home" class="btn-normal btn-small">Home</a></li>
+          </ul>
+        </div>
+      </nav>
+
+       <section class="container featured box-row">
+             <div class="">
+               <h2 class="word-center">Food</h2>
+             </div>
+
+             <div class="box-col-5">
+
+
+               <div class="panel">
+                 <h4>
+                   Food Items
+                 </h4>
+                 <div class="">
+                   <div class="list-item">
+                     <div class="box-col-2">
+                       <img src="{{ url_for('static', filename='img/chickenbiriani.jpg') }}" class="order-image" alt="">
+                     </div>
+                     <div class="box-col-6 order-description" >
+                       Chicken Biriani | Price: Ksh.350
+                       <div class="box-col-8">
+                         <a href="/admin-edit-food" class="btn-lightblue btn-small" name="button"> Edit</a>
+                         <button type="button" class="btn-maroon btn-small" name="button"> Delete</button>
+                       </div>
+                     </div>
+                   </div>
+                   <div class="list-item">
+                     <div class="box-col-2">
+                       <img src="{{ url_for('static', filename='img/frenchfries.jpg') }}" class="order-image" alt="">
+                     </div>
+                     <div class="box-col-6 order-description" >
+                       French Fries | Price: Ksh.150
+                       <div class="box-col-8">
+                         <a href="/admin-edit-food" class="btn-lightblue btn-small" name="button"> Edit</a>
+                         <button type="button" class="btn-maroon btn-small" name="button"> Delete</button>
+                       </div>
+                     </div>
+                     </div>
+                     <div class="list-item">
+                       <div class="box-col-2">
+                         <img src="{{ url_for('static', filename='img/grilledfish.jpg') }}" class="order-image" alt="">
+                       </div>
+                       <div class="box-col-6 order-description" >
+                         Grilled Fish | Price: Ksh.350
+                         <div class="box-col-8">
+                           <a href="/admin-edit-food" class="btn-lightblue btn-small" name="button"> Edit</a>
+                           <button type="button" class="btn-maroon btn-small" name="button"> Delete</button>
+                         </div>
+                       </div>
+                       </div>
+                       <div class="list-item">
+                         <div class="box-col-2">
+                           <img src="{{ url_for('static', filename='img/hotdog.jpg') }}" class="order-image" alt="">
+                         </div>
+                         <div class="box-col-6 order-description" >
+                           hotdog | Price: Ksh.100
+                           <div class="box-col-8">
+                             <a href="/admin-edit-food" class="btn-lightblue btn-small" name="button"> Edit</a>
+                             <button type="button" class="btn-maroon btn-small" name="button"> Delete</button>
+                           </div>
+                         </div>
+                         </div>
+                   </div>
+                 </div>
+
+               </div>
+
+               <div class="box-col-3">
+                 <div class="panel">
+                    <div class="">
+                      <form class="form" action="" method="post" enctype="multipart/form-data">
+                        <h4>Add Food Item</h4>
+                        <div class="">
+                          <label for="food-name">Food Name</label>
+                          <input type="text" name="food-name" value="" class="input" placeholder="Enter Food Name" required>
+                        </div>
+                        <div class="">
+                          <label for="food-price"> Price</label>
+                          <input type="text" name="food-price" value="" class="input" placeholder="Enter Food Price" required>
+                        </div>
+                        <div class="">
+                          <label for="food-image"> Image</label>
+                          <br>
+                          <input type="file" name="food-image" value="" required>
+                        </div>
+                        <br>
+                        <div class="">
+                          <button type="submit" name="button" class="btn-brown btn-large">Submit</button>
+                        </div>
+                      </form>
+                    </div>
+                  </div>
+               </div>
+
+       </section>
+
+    </div>
+  </div>
+  <!-- header end -->
+
+  <!-- footer start -->
+  <footer class="footer">
+      © Copyright. All Rights Reserved
+  </footer>
+  <!-- footer end -->
+
+  </body>
+</html>

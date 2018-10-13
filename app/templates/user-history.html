@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fast Food Fast</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+  </head>
+  <body>
+
+  <!-- header start-->
+  <div class="header">
+    <div class="bg-color">
+
+      <nav class="navbar-default nav-top">
+        <div class="nav-container">
+          <a class="navbar-brand" href="/">Fast Food Fast</a>
+
+          <ul class="nav-right">
+            <li class="navbar-brand-responsive"> <a href="/">Fast Food Fast</a></li>
+            <li><a href="/profile" > <img src="{{ url_for('static', filename='img/avatar.png') }}" class="nav-img-icons user-avatar" alt=""> </a></li>
+            <li><a href="/order" > <span class="cart-items" id="cart"></span> <img src="{{ url_for('static', filename='img/carticon.png') }}" class="nav-img-icons" alt=""> </a></li>
+            <li><a href="/order">Ksh.<span id="cart_total_price"></span> </a></li>
+            <li><a href="/history" class="btn-normal btn-small">History</a></li>
+            <li><a href="/menu" class="btn-normal btn-small">Menu</a></li>
+          </ul>
+        </div>
+      </nav>
+
+       <section class="container featured box-row">
+             <div class="">
+               <h2 class="word-center">History</h2>
+             </div>
+
+             <div class="box-col-8">
+               <div class="panel">
+                 <div class="" id="historydata">
+
+
+                 </div>
+               </div>
+             </div>
+
+       </section>
+
+    </div>
+  </div>
+  <!-- header end -->
+
+  <!-- footer start -->
+  <footer class="footer">
+      © Copyright. All Rights Reserved
+  </footer>
+  <!-- footer end -->
+
+  </body>
+</html>

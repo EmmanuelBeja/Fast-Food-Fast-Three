@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fast Food Fast</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+  </head>
+  <body>
+
+  <!-- header start-->
+  <div class="header">
+    <div class="bg-color">
+
+      <nav class="navbar-default nav-top">
+        <div class="nav-container">
+          <a class="navbar-brand" href="/">Fast Food Fast > Admin</a>
+
+          <ul class="nav-right">
+            <li class="navbar-brand-responsive"> <a href="/">Fast Food Fast > Admin</a></li>
+            <li><a href="/admin-profile" > <img src="{{ url_for('static', filename='img/avatar.png') }}" class="nav-img-icons user-avatar" alt=""> </a></li>
+            <li><a href="/admin-food" class="btn-normal btn-small">Food</a></li>
+            <li><a href="/admin-home" class="btn-normal btn-small">Home</a></li>
+          </ul>
+        </div>
+      </nav>
+
+       <section class="container featured box-row">
+             <div class="">
+               <h2 class="word-center">Edit Profile</h2>
+             </div>
+
+             <div class="box-col-8">
+               <div class="panel">
+                 <div class="">
+                  <form class="form" action="" method="post">
+                    <div class="">
+                      <label for="userName">User Name</label>
+                      <input type="text" name="userName" value="" class="input" placeholder="User Name" required>
+                    </div>
+                    <div class="">
+                      <label for="email"> Email</label>
+                      <input type="email" name="email" value="" class="input" placeholder="Email" required>
+                    </div>
+                    <div class="">
+                      <label for="password"> Password</label>
+                      <input type="password" name="password" value="" class="input" placeholder="Password" required>
+                    </div>
+                    <br>
+                    <div class="">
+                      <button type="submit" name="button" class="btn-orange btn-large btn-wide">Submit</button>
+                    </div>
+                  </form>
+                 </div>
+               </div>
+             </div>
+
+       </section>
+
+    </div>
+  </div>
+  <!-- header end -->
+
+  <!-- footer start -->
+  <footer class="footer">
+      © Copyright. All Rights Reserved
+  </footer>
+  <!-- footer end -->
+
+  </body>
+</html>
