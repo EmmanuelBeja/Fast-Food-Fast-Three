@@ -179,10 +179,8 @@ class Order(object):
                         (client_adress, quantity, order_id))
                     self.conn.commit()
                 else:
-                    self.cur.execute("INSERT INTO  tbl_orders(food_id, client_id, client_adress,\
-                    quantity, status)\
-                    VALUES(%(food_id)s, %(client_id)s, %(client_adress)s, %(quantity)s,\
-                    %(status)s);",
+                    self.cur.execute("INSERT INTO  tbl_orders(food_id, client_id, client_adress, quantity, status)\
+                    VALUES(%(food_id)s, %(client_id)s, %(client_adress)s, %(quantity)s, %(status)s);",
                                      {'food_id': food_id, 'client_id': client_id,\
                     'client_adress': client_adress, 'quantity': quantity, 'status': status})
                     self.conn.commit()
