@@ -18,9 +18,9 @@
 
           <ul class="nav-right">
             <li class="navbar-brand-responsive"> <a href="/">Fast Food Fast > Admin</a></li>
-            <li><a href="/admin-profile" > <img src="{{ url_for('static', filename='img/avatar.png') }}" class="nav-img-icons user-avatar" alt=""> </a></li>
-            <li><a href="/admin-food" class="btn-normal btn-small">Food</a></li>
-            <li><a href="/admin-home" class="btn-normal btn-small">Home</a></li>
+            <li><a href="/a-profile" > <img src="{{ url_for('static', filename='img/avatar.png') }}" class="nav-img-icons user-avatar" alt=""> </a></li>
+            <li><a href="/a-food" class="btn-normal btn-small">Food</a></li>
+            <li><a href="/a-home" class="btn-normal btn-small">Home</a></li>
           </ul>
         </div>
       </nav>
@@ -36,42 +36,8 @@
                </div>
 
                <div class="panel">
-                 <h4>Orders</h4>
-                 <div class="">
-                   <div class="list-item">
-                     <div class="box-col-2">
-                       <img src="{{ url_for('static', filename='img/chickenbiriani.jpg') }}" class="order-image" alt="">
-                     </div>
-                     <div class="box-col-6 order-description" >
-                       Chicken Biriani | Price: Ksh.350 | Qty: 1 Date: 12-8-2018 2:00pm
+                 <div class="" id="orderdata">
 
-                       <div class="box-col-8">
-                         <img src="{{ url_for('static', filename='img/location.png') }}" class="location-icon" alt="">
-                         Tudor, Mombasa. |
-                         By<i> Frank Johnes</i>
-                         <button type="button" class="btn-lightblue btn-small" name="button"> Accept</button>
-                         <button type="button" class="btn-maroon btn-small" name="button"> Decline</button>
-                         <button type="button" class="btn-green btn-small" name="button"> Complete</button>
-                       </div>
-                     </div>
-                   </div>
-                   <div class="list-item">
-                     <div class="box-col-2">
-                       <img src="{{ url_for('static', filename='img/frenchfries.jpg') }}" class="order-image" alt="">
-                     </div>
-                     <div class="box-col-6 order-description" >
-                       French Fries | Price: Ksh.150 | Qty: 1 Date: 15-8-2018 1:00pm
-
-                       <div class="box-col-8">
-                         <img src="{{ url_for('static', filename='img/location.png') }}" class="location-icon" alt="">
-                         Tudor, Mombasa. |
-                         By<i> Frank Johnes</i>
-                         <button type="button" class="btn-lightblue btn-small" name="button"> Accept</button>
-                         <button type="button" class="btn-maroon btn-small" name="button"> Decline</button>
-                         <button type="button" class="btn-green btn-small" name="button"> Complete</button>
-                       </div>
-                     </div>
-                     </div>
                    </div>
                  </div>
 
@@ -95,8 +61,84 @@
   if(!window.sessionStorage.getItem('token')){
     location.replace("/");
   }else {
+    //check role
+    userrole = window.sessionStorage.getItem('userrole');
+    if (userrole!='admin') {
+      location.replace("/menu");
+    }
     token = window.sessionStorage.getItem('token');
   }
+
+  //fetch cart details
+  fetch('https://emmanuelbeja-fast-food-fast.herokuapp.com/v2/orders/',
+  {
+    mode: 'cors',
+    crossdomain: true,
+    headers: { 'Content-Type': 'application/json; charset=utf-8', 'Authorization': 'Bearer '+token }
+  })
+  .then(response => response.json())
+  .then(data => {
+    order = data.Orders
+    orderdata = document.getElementById('orderdata');
+    order.forEach(function(orderitem){
+      orderdata.innerHTML += '<div class="list-item"><div class="box-col-8"><b>'+orderitem.food_name+'</b> | Price: Ksh.'+orderitem.food_price+' | Qty: '+orderitem.quantity+' | Status: '+orderitem.status+' | Date: '+orderitem.createddate+'<div class="box-col-8"><img src="{{ url_for('static', filename='img/location.png') }}" class="location-icon" alt="">'+orderitem.client_adress+'. | Phone : '+orderitem.client_phone+' | By<i> '+orderitem.client_name+'</i>  <button type="button" class="btn-lightblue btn-small" id="'+orderitem.order_id+'" onclick="accepted(this.id)" name="button"> Accept</button><button type="button" class="btn-maroon btn-small" id="'+orderitem.order_id+'" onclick="declined(this.id)" name="button"> Decline</button><button type="button" class="btn-green btn-small" id="'+orderitem.order_id+'" onclick="completed(this.id)" name="button">Complete</button></div></div></div>';
+    });
+  })
+
+    accepted = order_id => {
+      status = 'accepted';
+      url = 'https://emmanuelbeja-fast-food-fast.herokuapp.com/v2/orders/'+order_id
+      fetch(url, {
+        method: 'PUT',
+        body: JSON.stringify({
+          status: status
+        }),
+        mode: 'cors',
+        crossdomain: true,
+        headers: { 'Content-Type': 'application/json; charset=utf-8', 'Authorization': 'Bearer '+token }
+      })
+      .then(response => response.json())
+      .then(data => {
+       window.location.replace("/a-home");
+      });
+    }
+
+    declined = order_id => {
+      status = 'declined';
+      url = 'https://emmanuelbeja-fast-food-fast.herokuapp.com/v2/orders/'+order_id
+      fetch(url, {
+        method: 'PUT',
+        body: JSON.stringify({
+          status: status
+        }),
+        mode: 'cors',
+        crossdomain: true,
+        headers: { 'Content-Type': 'application/json; charset=utf-8', 'Authorization': 'Bearer '+token }
+      })
+      .then(response => response.json())
+      .then(data => {
+       window.location.replace("/a-home");
+      });
+    }
+
+    completed = order_id => {
+      status = 'completed';
+      url = 'https://emmanuelbeja-fast-food-fast.herokuapp.com/v2/orders/'+order_id
+      fetch(url, {
+        method: 'PUT',
+        body: JSON.stringify({
+          status: status
+        }),
+        mode: 'cors',
+        crossdomain: true,
+        headers: { 'Content-Type': 'application/json; charset=utf-8', 'Authorization': 'Bearer '+token }
+      })
+      .then(response => response.json())
+      .then(data => {
+       window.location.replace("/a-home");
+      });
+    }
+
   </script>
 
   </body>

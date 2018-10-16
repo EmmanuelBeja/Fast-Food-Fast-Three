@@ -14,17 +14,17 @@ class TestFood(unittest.TestCase):
 
         self.create_food = json.dumps(dict(
             food_name="mchele",
-            food_price=200,
+            food_price='200',
             food_image='mchele.jpg'))
 
         self.create_food2 = json.dumps(dict(
             food_name="pilau",
-            food_price=200,
+            food_price='200',
             food_image='pilau.jpg'))
 
         self.create_food3 = json.dumps(dict(
             food_name="burger",
-            food_price=200,
+            food_price='200',
             food_image='burger.jpg'))
 
         self.login_admin = json.dumps(dict(
@@ -52,10 +52,6 @@ class TestFood(unittest.TestCase):
             data=self.create_food2,
             content_type='application/json', headers=self.headers)
 
-        resource = self.client.post(
-            '/v2/menu',
-            data=self.create_food3,
-            content_type='application/json', headers=self.headers)
 
         data = json.loads(resource.data.decode())
         self.assertEqual(resource.status_code, 201)
@@ -85,7 +81,7 @@ class TestFood(unittest.TestCase):
 
     def test_food_deletion(self):
         """Test API can delete an existing order. (DEL request)."""
-        res = self.client.delete('/v2/food/1', headers=self.headers)
+        res = self.client.delete('/v2/food/3', headers=self.headers)
         self.assertEqual(res.status_code, 201)
 
     def test_food_can_be_edited(self):

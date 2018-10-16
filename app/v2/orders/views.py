@@ -1,10 +1,10 @@
 """/app/v1/orders/views.py"""
 from functools import wraps
 import jwt
-from flask import request, jsonify, session, render_template
+from flask import request, jsonify
 from . import orders_api
 from app.models import Order
-from app.jwt import Auth
+from app.jwt_file import Auth
 from app.database.conn import dbcon
 
 jwt_auth = Auth()
@@ -25,6 +25,7 @@ def is_admin_loggedin():
     return False
 
 def get_logged_in_user_id():
+    """get logged in user id"""
     header = request.headers.get('authorization')
     token = header.split(" ")[1]
     token = jwt.decode(token, 'SECRET_KEY', algorithms=['HS256'])
@@ -90,18 +91,11 @@ def validate_create_data(data):
 def validate_update_data(data):
     """validate order details"""
     try:
-        if " " in data["food_id"]:
-            return "food_id should be one word, no spaces"
-        # check if food_id is empty
-        elif data["food_id"] == "":
-            return "food_id required"
-        # check if id is int
-        elif data["food_id"].isalpha():
-            return "Required to be an integer"
-        # check if client_adress is empty
-        elif data["client_adress"] == "":
-            return "client_adress required"
-        #check statuses
+        if " " in data["ststus"]:
+            return "status should be one word, no spaces"
+        # check if status is empty
+        elif data["status"] == "":
+            return "status required"
         elif data["status"].lower() != "pending" or data["status"].lower() != "accepted" or\
             data["status"].lower() != "declined" or data["status"].lower() != "completed":
             return "Wrong order status. Allowed statuses: accepted, declined, completed"
@@ -127,24 +121,31 @@ def order():
 @orders_api.route('/users/pick_food/<int:food_id>', methods=["GET"])
 def pick_food(food_id):
     """ Pick food in menu."""
-    #add food to a session dict with food id and quantity
-    response = orderObject.add_to_cart(food_id)
-    return render_template('user-home.html')
+    client_id = get_logged_in_user_id()
+    response = orderObject.add_to_cart(food_id, client_id)
+    return response
 
+@orders_api.route('/users/cart_cancel', methods=["GET"])
+def cart_cancel():
+    """ cancel order."""
+    client_id = get_logged_in_user_id()
+    response = orderObject.cart_cancel(client_id)
+    return response
 
 @orders_api.route('/users/cart_quantity', methods=["GET"])
 def cart_quantity():
     """ Get cart quantity."""
     #return quantity session with food items picked
-    response = orderObject.cart_quantity()
+    client_id = get_logged_in_user_id()
+    response = orderObject.cart_quantity(client_id)
     return response
-
 
 @orders_api.route('/users/cart', methods=["GET"])
 def cart():
     """ Get all picked food."""
     #return quantity session with food items picked
-    response = orderObject.cart_details()
+    client_id = get_logged_in_user_id()
+    response = orderObject.cart_details(client_id)
     return response
 
 
@@ -171,16 +172,8 @@ def order_manipulation(order_id):
         elif request.method == 'PUT':
             # PUT Update the status  of an order
             data = request.get_json()
-            food_id = data['food_id']
-            client_id = get_logged_in_user_id()
-            client_adress = data['client_adress']
             status = data['status'].lower()
-            res = orderObject.update_order(
-                order_id,
-                food_id,
-                client_id,
-                client_adress,
-                status)
+            res = orderObject.update_order(order_id, status)
             return res
         # GET gets a specific order
         res = orderObject.get_order(order_id)

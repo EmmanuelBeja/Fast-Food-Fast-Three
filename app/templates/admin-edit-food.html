@@ -18,9 +18,9 @@
 
           <ul class="nav-right">
             <li class="navbar-brand-responsive"> <a href="/">Fast Food Fast > Admin</a></li>
-            <li><a href="/admin-profile" > <img src="{{ url_for('static', filename='img/avatar.png') }}" class="nav-img-icons user-avatar" alt=""> </a></li>
-            <li><a href="/admin-food" class="btn-normal btn-small">Food</a></li>
-            <li><a href="/admin-home" class="btn-normal btn-small">Home</a></li>
+            <li><a href="/a-profile" > <img src="{{ url_for('static', filename='img/avatar.png') }}" class="nav-img-icons user-avatar" alt=""> </a></li>
+            <li><a href="/a-food" class="btn-normal btn-small">Food</a></li>
+            <li><a href="/a-home" class="btn-normal btn-small">Home</a></li>
           </ul>
         </div>
       </nav>
@@ -32,41 +32,29 @@
 
              <div class="box-col-5">
                <div class="panel">
-                 <div class="">
-                   <div class="list-item">
-                     <div class="box-col-2">
-                       <img src="{{ url_for('static', filename='img/chickenbiriani.jpg') }}" class="order-image" alt="">
-                     </div>
-                     <div class="box-col-6 order-description" >
-                       Chicken Biriani | Price: Ksh.350
-                     </div>
-                   </div>
-                 </div>
+                 <div class="" id="food-data">
 
+                 </div>
                </div>
              </div>
              <div class="box-col-3">
                <div class="panel">
                   <div class="">
-                    <form class="form" action="" method="post">
+                    <div class="form" enctype="multipart/form-data">
+                      <span id="message"></span>
                       <div class="">
                         <label for="food-name">Food Name</label>
-                        <input type="text" name="food-name" value="Chicken Biriani" class="input" placeholder="Enter Food Name" required>
+                        <input type="text" id="food_name" name="food-name" value="" class="input" placeholder="Enter Food Name"  disabled required>
                       </div>
                       <div class="">
                         <label for="food-price"> Price</label>
-                        <input type="text" name="food-price" value="350" class="input" placeholder="Enter Food Price" required>
-                      </div>
-                      <div class="">
-                        <label for="food-image"> Image</label>
-                        <br>
-                        <input type="file" name="food-image" value="" required>
+                        <input type="text" id="food_price" name="food-price" value="" class="input" placeholder="Enter Food Price" required>
                       </div>
                       <br>
                       <div class="">
-                        <button type="submit" name="button" class="btn-brown btn-large">Submit</button>
+                        <button type="submit" name="button" onclick="editfood()" class="btn-brown btn-large">Submit</button>
                       </div>
-                    </form>
+                    </div>
                   </div>
                 </div>
              </div>
@@ -88,8 +76,70 @@
   if(!window.sessionStorage.getItem('token')){
     location.replace("/");
   }else {
+    //check role
+    userrole = window.sessionStorage.getItem('userrole');
+    if (userrole!='admin') {
+      location.replace("/menu");
+    }
     token = window.sessionStorage.getItem('token');
   }
+
+  //check if user is really trying to edit a food item
+  if(!window.sessionStorage.getItem('food_id')){
+    location.replace("/a-home");
+  }else {
+    food_id = window.sessionStorage.getItem('food_id');
+  }
+
+  //fetch food we want to edit
+  fetch('https://emmanuelbeja-fast-food-fast.herokuapp.com/v2/food/'+food_id,
+  {
+    mode: 'cors',
+    crossdomain: true,
+    headers: { 'Content-Type': 'application/json; charset=utf-8', 'Authorization': 'Bearer '+token }
+  })
+  .then(response => response.json())
+  .then(data => {
+    foods = data.Foods
+    fooditem = document.getElementById('food-data');
+    fooditem.innerHTML += '<div class="list-item"><div class="box-col-2"><img src="static/img/'+foods.food_image+'" class="order-image"  alt=""></div><div class="box-col-6 order-description" >'+foods.food_name+' | Price: Ksh.'+foods.food_price+'</div></div>';
+
+    document.getElementById('food_name').value += foods.food_name;
+    document.getElementById('food_price').value += foods.food_price;
+  })
+
+  editfood = () => {
+    food_name = document.getElementById('food_name').value;
+    food_price = document.getElementById('food_price').value;
+    food_image = food_name+'.jpg';
+
+    fetch('https://emmanuelbeja-fast-food-fast.herokuapp.com/v2/food/'+food_id,
+    {
+      method: 'PUT',
+      body: JSON.stringify({
+        food_name: food_name,
+        food_price: food_price,
+        food_image: food_image
+      }),
+      mode: 'cors',
+      crossdomain: true,
+      headers: { 'Content-Type': 'application/json; charset=utf-8', 'Authorization': 'Bearer '+token}
+    })
+    .then(response => response.json())
+    .then(data => {
+      console.log(data)
+      message = document.getElementById('message');
+      message.style.backgroundColor = "#5bc0de";
+      message.style.borderLeft = "5px solid orange";
+      message.style.color = "white";
+      message.style.padding = "5px";
+      message.style.width = "100%";
+      message.style.display = "block";
+      message.style.borderRadius = "5px";
+      message.innerHTML = data.message;
+    })
+  }
+
   </script>
 
   </body>
