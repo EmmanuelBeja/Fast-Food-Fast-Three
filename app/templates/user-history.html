@@ -65,7 +65,11 @@
 
     //fetch cart quantity and totalprice
     cart = () => {
-      fetch('http://127.0.0.1:5000/v2/users/cart_quantity')
+      fetch('https://emmanuelbeja-fast-food-fast.herokuapp.com/v2/users/cart_quantity', {
+        mode: 'cors',
+        crossdomain: true,
+        headers: { 'Content-Type': 'application/json; charset=utf-8', 'Authorization': 'Bearer '+token }
+      })
       .then(response => response.json())
       .then(data => {
         let cart_quantity = document.getElementById('cart');
@@ -78,7 +82,7 @@
     cart();
 
     //fetch cart details
-    fetch('http://127.0.0.1:5000/v2/users/orders', {
+    fetch('https://emmanuelbeja-fast-food-fast.herokuapp.com/v2/users/orders', {
       mode: 'cors',
       crossdomain: true,
       headers: { 'Authorization': 'Bearer '+token }

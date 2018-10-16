@@ -63,7 +63,7 @@
 
   <script type="text/javascript">
 
-    fetch('http://127.0.0.1:5000/v2/menu')
+    fetch('https://emmanuelbeja-fast-food-fast.herokuapp.com/v2/menu')
     .then(response => response.json())
     .then(data => {
       foods = data.Foods
@@ -74,7 +74,6 @@
         '<div class="food-description"><span class="price text-fit">Ksh.'+food.food_price+'</span><span class="span-add-to-cart">'+
         '<a href="/login" class="btn-brown btn-large btn-wide">Add to Cart.<img src="static/img/add.png" class="food-add-icon" '+
         'style="height:20px;width:20px;" alt=""></a></span></div></div><div></div>';
-        console.log(food)
       });
     })
 

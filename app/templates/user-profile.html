@@ -84,7 +84,11 @@
 
   //fetch cart quantity and totalprice
   cart = () => {
-    fetch('http://127.0.0.1:5000/v2/users/cart_quantity')
+    fetch('https://emmanuelbeja-fast-food-fast.herokuapp.com/v2/users/cart_quantity', {
+      mode: 'cors',
+      crossdomain: true,
+      headers: { 'Content-Type': 'application/json; charset=utf-8', 'Authorization': 'Bearer '+token }
+    })
     .then(response => response.json())
     .then(data => {
       let cart_quantity = document.getElementById('cart');
@@ -102,7 +106,7 @@
     password = document.getElementById('password').value;
     confirmpass = document.getElementById('confirmpass').value;
 
-    fetch('http://127.0.0.1:5000/v2/users',
+    fetch('https://emmanuelbeja-fast-food-fast.herokuapp.com/v2/users',
     {
       method: 'PUT',
       body: JSON.stringify({
@@ -119,11 +123,12 @@
     .then(data => {
       console.log(data)
       message = document.getElementById('message');
-      message.style.backgroundColor = "#a0db8e";
-      message.style.borderLeft = "5px solid #fff8b6";
+      message.style.backgroundColor = "#5bc0de";
+      message.style.borderLeft = "5px solid orange";
       message.style.color = "white";
       message.style.padding = "5px";
       message.style.width = "100%";
+      message.style.display = "block";
       message.style.borderRadius = "5px";
       message.innerHTML = data.message;
     })

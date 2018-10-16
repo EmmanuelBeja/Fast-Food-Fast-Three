@@ -59,7 +59,11 @@
 
   //fetch cart quantity and totalprice
   cart = () => {
-    fetch('http://127.0.0.1:5000/v2/users/cart_quantity')
+    fetch('https://emmanuelbeja-fast-food-fast.herokuapp.com/v2/users/cart_quantity', {
+      mode: 'cors',
+      crossdomain: true,
+      headers: { 'Content-Type': 'application/json; charset=utf-8', 'Authorization': 'Bearer '+token }
+    })
     .then(response => response.json())
     .then(data => {
       let cart_quantity = document.getElementById('cart');
@@ -72,7 +76,7 @@
   cart();
 
     //fetch menu
-    fetch('http://127.0.0.1:5000/v2/menu')
+    fetch('https://emmanuelbeja-fast-food-fast.herokuapp.com/v2/menu')
     .then(response => response.json())
     .then(data => {
       foods = data.Foods
@@ -87,17 +91,18 @@
     })
 
     //add to cart
-    pick_food = (food_id) => {
-      cart();
-      let url = 'http://127.0.0.1:5000/v2/users/pick_food/'+food_id;
-      fetch(url)
+    pick_food = food_id => {
+      let url = 'https://emmanuelbeja-fast-food-fast.herokuapp.com/v2/users/pick_food/'+food_id;
+      fetch(url, {
+        mode: 'cors',
+        crossdomain: true,
+        headers: { 'Content-Type': 'application/json; charset=utf-8', 'Authorization': 'Bearer '+token }
+      })
       .then(response => response.json())
       .then(data => {
-      //cart();
-        //window.location.reload(true);
-        //location.reload();
-      }, cart());
-      //location.reload();
+       window.location.replace("/menu");
+      });
+
     };
 
   </script>
