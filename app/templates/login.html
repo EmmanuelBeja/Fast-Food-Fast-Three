@@ -76,7 +76,7 @@
     username = document.getElementById('username').value;
     password = document.getElementById('password').value;
 
-    fetch('http://127.0.0.1:5000/v2/auth/login',
+    fetch('https://emmanuelbeja-fast-food-fast.herokuapp.com/v2/auth/login',
     {
       method: 'POST',
       body: JSON.stringify({
@@ -91,23 +91,32 @@
     .then(data => {
       console.log(data)
       message = document.getElementById('message');
-      message.style.backgroundColor = "#a0db8e";
-      message.style.borderLeft = "5px solid #fff8b6";
+      message.style.backgroundColor = "#5bc0de";
+      message.style.borderLeft = "5px solid orange";
       message.style.color = "white";
       message.style.padding = "5px";
       message.style.width = "100%";
+      message.style.display = "block";
       message.style.borderRadius = "5px";
       message.innerHTML = data.message;
 
       token = data.token;
       window.sessionStorage.setItem('token', token);
 
+      userrole = data.userrole;
+      window.sessionStorage.setItem('userrole', userrole);
+
       redirect = () => {
         if(data.message=='You are successfully logged in') {
-           location.replace("/menu");
+          if(userrole=='admin'){
+            location.replace("/a-home");
+            console.log('admin');
+          }else{
+            location.replace("/menu");
+            console.log('client');
+          }
          }
       }
-
       setTimeout( redirect,1000);
     })
   }
