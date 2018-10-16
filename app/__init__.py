@@ -54,19 +54,19 @@ def create_app(config_name):
     def user_profile():
         return render_template('user-profile.html')
 
-    @app.route('/admin-profile')
+    @app.route('/a-profile')
     def admin_profile():
         return render_template('admin-profile.html')
 
-    @app.route('/admin-home')
+    @app.route('/a-home')
     def admin_home():
         return render_template('admin-home.html')
 
-    @app.route('/admin-food')
+    @app.route('/a-food')
     def admin_food():
         return render_template('admin-food.html')
 
-    @app.route('/admin-edit-food')
+    @app.route('/a-edit-food')
     def admin_edit_food():
         return render_template('admin-edit-food.html')
 

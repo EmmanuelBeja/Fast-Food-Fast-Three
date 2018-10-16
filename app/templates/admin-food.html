@@ -17,10 +17,10 @@
           <a class="navbar-brand" href="/">Fast Food Fast > Admin</a>
 
           <ul class="nav-right">
-            <li class="navbar-brand-responsive"> <a href="/">Fast Food Fast</a> </li>
-            <li><a href="/admin-profile" > <img src="{{ url_for('static', filename='img/avatar.png') }}" class="nav-img-icons user-avatar" alt=""> </a></li>
-            <li><a href="/admin-food" class="btn-normal btn-small">Food</a></li>
-            <li><a href="/admin-home" class="btn-normal btn-small">Home</a></li>
+            <li class="navbar-brand-responsive"> <a href="/">Fast Food Fast > Admin</a></li>
+            <li><a href="/a-profile" > <img src="{{ url_for('static', filename='img/avatar.png') }}" class="nav-img-icons user-avatar" alt=""> </a></li>
+            <li><a href="/a-food" class="btn-normal btn-small">Food</a></li>
+            <li><a href="/a-home" class="btn-normal btn-small">Home</a></li>
           </ul>
         </div>
       </nav>
@@ -31,89 +31,44 @@
              </div>
 
              <div class="box-col-5">
-
-
                <div class="panel">
-                 <h4>
-                   Food Items
-                 </h4>
-                 <div class="">
-                   <div class="list-item">
-                     <div class="box-col-2">
-                       <img src="{{ url_for('static', filename='img/chickenbiriani.jpg') }}" class="order-image" alt="">
-                     </div>
-                     <div class="box-col-6 order-description" >
-                       Chicken Biriani | Price: Ksh.350
-                       <div class="box-col-8">
-                         <a href="/admin-edit-food" class="btn-lightblue btn-small" name="button"> Edit</a>
-                         <button type="button" class="btn-maroon btn-small" name="button"> Delete</button>
-                       </div>
-                     </div>
-                   </div>
-                   <div class="list-item">
-                     <div class="box-col-2">
-                       <img src="{{ url_for('static', filename='img/frenchfries.jpg') }}" class="order-image" alt="">
-                     </div>
-                     <div class="box-col-6 order-description" >
-                       French Fries | Price: Ksh.150
-                       <div class="box-col-8">
-                         <a href="/admin-edit-food" class="btn-lightblue btn-small" name="button"> Edit</a>
-                         <button type="button" class="btn-maroon btn-small" name="button"> Delete</button>
-                       </div>
-                     </div>
-                     </div>
-                     <div class="list-item">
-                       <div class="box-col-2">
-                         <img src="{{ url_for('static', filename='img/grilledfish.jpg') }}" class="order-image" alt="">
-                       </div>
-                       <div class="box-col-6 order-description" >
-                         Grilled Fish | Price: Ksh.350
-                         <div class="box-col-8">
-                           <a href="/admin-edit-food" class="btn-lightblue btn-small" name="button"> Edit</a>
-                           <button type="button" class="btn-maroon btn-small" name="button"> Delete</button>
-                         </div>
-                       </div>
-                       </div>
-                       <div class="list-item">
-                         <div class="box-col-2">
-                           <img src="{{ url_for('static', filename='img/hotdog.jpg') }}" class="order-image" alt="">
-                         </div>
-                         <div class="box-col-6 order-description" >
-                           hotdog | Price: Ksh.100
-                           <div class="box-col-8">
-                             <a href="/admin-edit-food" class="btn-lightblue btn-small" name="button"> Edit</a>
-                             <button type="button" class="btn-maroon btn-small" name="button"> Delete</button>
-                           </div>
-                         </div>
-                         </div>
+                 <div class="" id="food-data">
+
+
                    </div>
                  </div>
-
                </div>
 
                <div class="box-col-3">
                  <div class="panel">
                     <div class="">
-                      <form class="form" action="" method="post" enctype="multipart/form-data">
+                      <div class="form" enctype="multipart/form-data">
                         <h4>Add Food Item</h4>
+                        <span id="message"></span>
                         <div class="">
                           <label for="food-name">Food Name</label>
-                          <input type="text" name="food-name" value="" class="input" placeholder="Enter Food Name" required>
+                          <br>
+                          <select name="food_name" id="food_name" required>
+                            <option value=" ">Select food</option>
+                            <option value="biriani">Biriani</option>
+                            <option value="burger">Burger</option>
+                            <option value="frenchfries">French fries</option>
+                            <option value="grilledfish">Grilled Fish</option>
+                            <option value="grilledmeat">Grilled Meat</option>
+                            <option value="hotdog">Hotdog</option>
+                            <option value="kaimati">Kaimati</option>
+                            <option value="pizza">Pizza</option>
+                          </select>
                         </div>
                         <div class="">
                           <label for="food-price"> Price</label>
-                          <input type="text" name="food-price" value="" class="input" placeholder="Enter Food Price" required>
-                        </div>
-                        <div class="">
-                          <label for="food-image"> Image</label>
-                          <br>
-                          <input type="file" name="food-image" value="" required>
+                          <input type="text" id="food_price" name="food-price" value="" class="input" placeholder="Enter Food Price" required>
                         </div>
                         <br>
                         <div class="">
-                          <button type="submit" name="button" class="btn-brown btn-large">Submit</button>
+                          <button type="submit" name="button" onclick="addfood()" class="btn-brown btn-large">Submit</button>
                         </div>
-                      </form>
+                      </div>
                     </div>
                   </div>
                </div>
@@ -135,8 +90,83 @@
   if(!window.sessionStorage.getItem('token')){
     location.replace("/");
   }else {
+    //check role
+    userrole = window.sessionStorage.getItem('userrole');
+    if (userrole!='admin') {
+      location.replace("/menu");
+    }
     token = window.sessionStorage.getItem('token');
   }
+
+  //fetch menu
+  fetch('https://emmanuelbeja-fast-food-fast.herokuapp.com/v2/menu')
+  .then(response => response.json())
+  .then(data => {
+    foods = data.Foods
+    fooditem = document.getElementById('food-data');
+    foods.forEach(food => {
+      fooditem.innerHTML += '<div class="list-item"><div class="box-col-2"><img src="static/img/'+food.food_image+'" class="order-image"  alt=""></div><div class="box-col-6 order-description" >'+food.food_name+' | Price: Ksh.'+food.food_price+'<div class="box-col-8"><a href="javascript:;" id="'+food.food_id+'" onclick="edit_food(this.id)" class="btn-lightblue btn-small" name="button"> Edit</a><button type="button" id="'+food.food_id+'" onclick="delete_food(this.id)" class="btn-maroon btn-small" name="button"> Delete</button></div></div></div>';
+    });
+  })
+
+  //add food
+  addfood = () => {
+    food_name = document.getElementById('food_name').value;
+    food_price = document.getElementById('food_price').value;
+    food_image = food_name+'.jpg';
+
+    fetch('https://emmanuelbeja-fast-food-fast.herokuapp.com/v2/menu',
+    {
+      method: 'POST',
+      body: JSON.stringify({
+        food_name: food_name,
+        food_price: food_price,
+        food_image: food_image
+      }),
+      mode: 'cors',
+      crossdomain: true,
+      headers: { 'Content-Type': 'application/json; charset=utf-8', 'Authorization': 'Bearer '+token }
+    })
+    .then(response => response.json())
+    .then(data => {
+      console.log(data)
+      message = document.getElementById('message');
+      message.style.backgroundColor = "#5bc0de";
+      message.style.borderLeft = "5px solid orange";
+      message.style.color = "white";
+      message.style.padding = "5px";
+      message.style.width = "100%";
+      message.style.display = "block";
+      message.style.borderRadius = "5px";
+      message.innerHTML = data.message;
+    })
+  }
+
+
+
+  //redirect to page for editing
+  edit_food = food_id => {
+    window.sessionStorage.setItem('food_id', food_id);
+    location.replace("/a-edit-food");
+  }
+
+  //delete food
+  delete_food = food_id => {
+    url = 'https://emmanuelbeja-fast-food-fast.herokuapp.com/v2/food/'+food_id
+    fetch(url,
+    {
+      method: 'DELETE',
+      mode: 'cors',
+      crossdomain: true,
+      headers: { 'Content-Type': 'application/json; charset=utf-8', 'Authorization': 'Bearer '+token}
+    })
+    .then(response => response.json())
+    .then(data => {
+      console.log(data)
+      location.replace("/a-food")
+    })
+  }
+
   </script>
 
   </body>

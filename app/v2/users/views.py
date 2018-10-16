@@ -1,11 +1,10 @@
 """app/v1/users/views.py"""
 from functools import wraps
 import jwt
-import re
-from flask import request, jsonify, session
+from flask import request, jsonify
 from . import users_api
 from app.models import User
-from app.jwt import Auth
+from app.jwt_file import Auth
 from app.database.conn import dbcon
 
 jwt_auth = Auth()
@@ -27,6 +26,7 @@ def is_admin_loggedin():
     return False
 
 def get_logged_in_user_id():
+    """get logged in user id"""
     header = request.headers.get('authorization')
     token = header.split(" ")[1]
     token = jwt.decode(token, 'SECRET_KEY', algorithms=['HS256'])

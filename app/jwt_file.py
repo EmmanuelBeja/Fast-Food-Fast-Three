@@ -1,8 +1,8 @@
 """jwt auth"""
 from datetime import datetime
+from flask import request
 import jwt
 from .database.conn import dbcon
-from flask import request, jsonify
 
 class Auth(object):
     """jwt auth"""
@@ -32,7 +32,6 @@ class Auth(object):
                 (token, status))
             if self.cur.fetchone():
                 return True
-            else:
-                return False
+            return False
         except Exception:
             return False

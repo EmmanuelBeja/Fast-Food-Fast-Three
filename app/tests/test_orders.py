@@ -22,8 +22,6 @@ class TestOrders(unittest.TestCase):
             client_adress='Mtwapa'))
 
         self.edit_order = json.dumps(dict(
-            food_id=3,
-            client_adress='Kwale',
             status='pending'))
 
         self.login_admin = json.dumps(dict(
@@ -40,13 +38,25 @@ class TestOrders(unittest.TestCase):
 
     def test_add_to_cart(self):
         resource = self.client.get(
+            '/v2/users/pick_food/1',
+            data=json.dumps(dict()), headers=self.headers)
+        self.assertEqual(resource.status_code, 200)
+        resource = self.client.get(
             '/v2/users/pick_food/2',
+            data=json.dumps(dict()), headers=self.headers)
+        self.assertEqual(resource.status_code, 200)
+        resource = self.client.get(
+            '/v2/users/pick_food/1',
             data=json.dumps(dict()), headers=self.headers)
         self.assertEqual(resource.status_code, 200)
 
 
     def test_order_creation(self):
         """ Test for order creation """
+        resource = self.client.get(
+            '/v2/users/pick_food/2',
+            data=json.dumps(dict()), headers=self.headers)
+        self.assertEqual(resource.status_code, 200)
         resource = self.client.post(
             '/v2/users/orders',
             data=self.create_order,
