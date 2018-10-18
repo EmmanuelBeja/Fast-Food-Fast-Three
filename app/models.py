@@ -361,7 +361,7 @@ class Order(object):
             #loop through to get total price
             rows = self.cur.fetchall()
             for order in rows:
-                totalprice += int(totalprice)+int(order[6])
+                totalprice = int(totalprice)+int(order[6])
                 cartlist.update({
                     'food_id': order[1],
                     'food_name': order[2],
