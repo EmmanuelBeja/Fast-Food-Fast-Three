@@ -1,10 +1,10 @@
 """app/v1/users/models.py"""
 import re
 from datetime import datetime, timedelta
+from flask import jsonify
 import jwt
-from flask import jsonify, session, request, make_response
-from .database.conn import dbcon
-from app.jwt import Auth
+from app.database.conn import dbcon
+from app.jwt_file import Auth
 
 jwt_object = Auth()
 
@@ -54,7 +54,7 @@ class User(object):
             VALUES(%(token)s);", {'token': token})
             self.conn.commit()
             mssg = {"message": "You are successfully logged in",
-                    "token": token.decode()}
+                    "token": token.decode(), 'userrole': userrole}
             return jsonify(mssg), 200
         return jsonify({
             "message": "Wrong username or password"}), 403
@@ -156,16 +156,18 @@ class Order(object):
         self.result = []
         self.pick_food_list = []
 
-
     def create_order(self, client_id, client_adress):
         """Create order_item"""
         status = 'pending'
-        if 'cart' in session:
-            self.pick_food_list = session['cart']
-            for food in self.pick_food_list:
-                food_id = food['food_id']
-                quantity = food['quantity']
-
+        self.cur.execute(
+            "SELECT * FROM tbl_order_cache WHERE client_id=%(client_id)s",\
+            {'client_id': client_id})
+        if self.cur.rowcount > 0:
+            #loop through to get total price
+            row_cache = self.cur.fetchall()
+            for order in row_cache:
+                food_id = order[1]
+                quantity = order[5]
                 #Check if user had ordered this food earlier
                 self.cur.execute("SELECT * FROM tbl_orders WHERE food_id=%(food_id)s\
                 and client_id=%(client_id)s and status=%(status)s",
@@ -173,22 +175,25 @@ class Order(object):
                 if self.cur.rowcount > 0:
                     rows = self.cur.fetchone()
                     order_id = rows[0]
-                    quantity = int(rows[4]) + quantity
+                    quantity = int(rows[4]) + int(quantity)
                     self.cur.execute(
                         "UPDATE tbl_orders SET client_adress=%s, quantity=%s WHERE order_id=%s",
                         (client_adress, quantity, order_id))
                     self.conn.commit()
                 else:
-                    self.cur.execute("INSERT INTO  tbl_orders(food_id, client_id, client_adress, quantity, status)\
-                    VALUES(%(food_id)s, %(client_id)s, %(client_adress)s, %(quantity)s, %(status)s);",
+                    self.cur.execute("INSERT INTO  tbl_orders(food_id, client_id, client_adress,\
+                    quantity, status)\
+                    VALUES(%(food_id)s, %(client_id)s, %(client_adress)s, %(quantity)s,\
+                    %(status)s);",
                                      {'food_id': food_id, 'client_id': client_id,\
                     'client_adress': client_adress, 'quantity': quantity, 'status': status})
                     self.conn.commit()
 
-
-            self.pick_food_list = []
-            session['cart'] = self.pick_food_list
-            session['totalprice'] = 0
+                #delete all orders in cache for this user
+                self.cur.execute(
+                    "DELETE FROM tbl_order_cache WHERE client_id=%(client_id)s", {
+                        'client_id': client_id})
+                self.conn.commit()
 
         return jsonify({"message": "Successful. Order created."}), 201
 
@@ -198,12 +203,29 @@ class Order(object):
         self.cur.execute("SELECT * FROM tbl_orders")
         if self.cur.rowcount > 0:
             rows = self.cur.fetchall()
+            self.orderlist = {}
+            self.result = []
             for order in rows:
+                food_id = order[1]
+                userid = order[2]
+                self.cur.execute("SELECT * FROM tbl_foods WHERE food_id=%(food_id)s",
+                                 {'food_id': food_id})
+                rowfood = self.cur.fetchone()
+
+                self.cur.execute("SELECT * FROM tbl_users WHERE userid=%(userid)s",
+                                 {'userid': userid})
+                rowuser = self.cur.fetchone()
+
                 self.orderlist.update({
                     'order_id': order[0],
-                    'food_id': order[1],
-                    'client_id': order[2],
-                    'client_adress': order[3]})
+                    'food_name': rowfood[1],
+                    'food_price': rowfood[2],
+                    'client_adress': order[3],
+                    'client_name': rowuser[1],
+                    'client_phone': rowuser[2],
+                    'quantity': order[4],
+                    'status': order[5],
+                    'createddate': order[6]})
                 self.result.append(dict(self.orderlist))
             return jsonify({
                 "message": "Successful. Orders Found.",
@@ -227,7 +249,7 @@ class Order(object):
                 "message": "Successful. Order found.",
                 "Orders": self.result}), 200
         return jsonify({
-            "message": "No Order."}), 200
+            "message": "No Order."}), 400
 
     def get_user_orders(self, client_id):
         """get orders for specific user"""
@@ -260,97 +282,99 @@ class Order(object):
                 "Orders": self.result}), 200
 
         return jsonify({
-            "message": "No Order."}), 200
+            "message": "No Order."}), 400
 
 
-    def add_to_cart(self, food_id):
+    def add_to_cart(self, food_id, client_id):
         """add food to cart"""
-        fooditem = {}
-        notfound = False
         #get food price
         self.cur.execute(
             "SELECT * FROM tbl_foods WHERE food_id=%(food_id)s", {'food_id': food_id})
         rows = self.cur.fetchone()
-        food_price = rows[2]
+        price = rows[2]
         food_name = rows[1]
 
-        if 'cart' in session:
-            self.pick_food_list = session['cart']
-            if len(self.pick_food_list) > 0:
-                for food in self.pick_food_list:
-                    if food['food_id'] == food_id:
-                        #update quantity of food
-                        food['quantity'] = food['quantity'] + 1
-                        totalprice = session['totalprice']
-                        session['totalprice'] = int(totalprice) + int(food_price)
-                        session['cart'] = self.pick_food_list
-                        notfound = False
-                        return jsonify({"message": "Added to cart."}), 200
-                        notfound = True
-            fooditem['food_id'] = food_id
-            fooditem['quantity'] = 1
-            fooditem['price'] = food_price
-            fooditem['food_name'] = food_name
-            totalprice = session['totalprice']
-            session['totalprice'] = int(totalprice) + int(food_price)
-            self.pick_food_list.append(fooditem)
-            session['cart'] = self.pick_food_list
-
-            if notfound is True:
-                fooditem['food_id'] = food_id
-                fooditem['quantity'] = 1
-                fooditem['price'] = food_price
-                fooditem['food_name'] = food_name
-                totalprice = session['totalprice']
-                session['totalprice'] = int(totalprice) + int(food_price)
-                self.pick_food_list.append(fooditem)
-                session['cart'] = self.pick_food_list
+        #check if food ordered before
+        self.cur.execute(
+            "SELECT * FROM tbl_order_cache WHERE food_id=%(food_id)s and client_id=%(client_id)s",\
+            {'food_id': food_id, 'client_id': client_id})
+        if self.cur.rowcount > 0:
+            #update order
+            rows = self.cur.fetchone()
+            quantity = int(rows[5]) + 1
+            total = int(quantity)*int(price)
+            self.cur.execute(
+                "UPDATE tbl_order_cache SET quantity=%s, total=%s\
+            WHERE food_id=%s AND client_id=%s",
+                (quantity,
+                 total,
+                 food_id,
+                 client_id))
+            self.conn.commit()
         else:
-            fooditem['food_id'] = food_id
-            fooditem['quantity'] = 1
-            fooditem['price'] = food_price
-            fooditem['food_name'] = food_name
-            session['totalprice'] = food_price
-            self.pick_food_list.append(fooditem)
-            session['cart'] = self.pick_food_list
+            #insert new order
+            quantity = 1
+            self.cur.execute("INSERT INTO tbl_order_cache(food_id, food_name, client_id, price,\
+            quantity, total)\
+            VALUES(%(food_id)s, %(food_name)s, %(client_id)s, %(price)s, %(quantity)s, %(total)s);",
+                             {'food_id': food_id, 'food_name': food_name, 'client_id': client_id,\
+                             'price': price, 'quantity': quantity, 'total': price})
+            self.conn.commit()
 
-        return jsonify({"message": "Added to cart."}), 200
+        return jsonify({"message": "Added to cart."}), 201
 
+    def cart_cancel(self, client_id):
+        """cancel order"""
+        self.cur.execute(
+            "DELETE FROM tbl_order_cache WHERE client_id=%(client_id)s", {
+                'client_id': client_id})
+        self.conn.commit()
+        return jsonify({"message": "Order Canceled."}), 200
 
-    def cart_quantity(self):
+    def cart_quantity(self, client_id):
         """get quantity added to cart"""
         total = 0
         totalprice = 0
-        if 'cart' in session:
-            self.pick_food_list = session['cart']
-            if len(self.pick_food_list) > 0:
-                for food in self.pick_food_list:
-                    total += food['quantity']
+        self.cur.execute(
+            "SELECT * FROM tbl_order_cache WHERE client_id=%(client_id)s", {'client_id': client_id})
+        if self.cur.rowcount > 0:
+            #loop through to get total and total price
+            rows = self.cur.fetchall()
+            for order in rows:
+                total = int(total)+int(order[5])
+                totalprice = int(totalprice)+int(order[6])
 
-            totalprice = session['totalprice']
-
-        return jsonify({'Cart': total, 'totalprice': totalprice})
+        return jsonify({'Cart': total, 'totalprice': totalprice}), 200
 
 
-    def cart_details(self):
+    def cart_details(self, client_id):
         """get cart details"""
-        total_price = 0
-        if 'cart' in session:
-            self.pick_food_list = session['cart']
+        totalprice = 0
+        cartlist = {}
+        cart = []
+        self.cur.execute(
+            "SELECT * FROM tbl_order_cache WHERE client_id=%(client_id)s",\
+            {'client_id': client_id})
+        if self.cur.rowcount > 0:
+            #loop through to get total price
+            rows = self.cur.fetchall()
+            for order in rows:
+                totalprice = int(totalprice)+int(order[6])
+                cartlist.update({
+                    'food_id': order[1],
+                    'food_name': order[2],
+                    'price': order[4],
+                    'quantity': order[5],
+                    'total': order[6]
+                    })
+                cart.append(dict(cartlist))
 
-            if len(self.pick_food_list) > 0:
-                for food in self.pick_food_list:
-                    total_price = int(total_price) + int(food['quantity'])*int(food['price'])
-
-        return jsonify({'Cart': self.pick_food_list, 'totalprice': total_price})
+        return jsonify({'Cart': cart, 'totalprice': totalprice}), 200
 
 
     def update_order(
             self,
             order_id,
-            food_id,
-            client_id,
-            client_adress,
             status):
         """ update Order """
         self.cur.execute("SELECT * FROM tbl_orders WHERE order_id=%(order_id)s",
@@ -359,20 +383,13 @@ class Order(object):
         if self.cur.rowcount > 0:
             # update this order details
             self.cur.execute(
-                "UPDATE tbl_orders SET food_id=%s, client_id=%s,\
-            client_adress=%s, status=%s WHERE order_id=%s",
-                (food_id,
-                 client_id,
-                 client_adress,
-                 status,
+                "UPDATE tbl_orders SET status=%s WHERE order_id=%s",
+                (status,
                  order_id))
             self.conn.commit()
-
             self.orderlist.update({
                 'order_id': rows[0],
-                'food_id': rows[1],
-                'client_id': rows[2],
-                'client_adress': rows[3]})
+                'order_status': rows[5]})
             return jsonify({
                 "message": "Update Successful.",
                 "Order": self.orderlist}), 201
@@ -389,7 +406,8 @@ class Order(object):
                     'order_id': order_id})
             self.conn.commit()
             return jsonify({"message": "Delete Successful."}), 201
-        return jsonify({"message": "No Order."}), 200
+        else:
+            return jsonify({"message": "No Order."}), 400
 
     def check_food_availability(self, food_id):
         """check if food is available in menu"""
@@ -399,8 +417,8 @@ class Order(object):
             return True
         return False
 
-
 class Food(object):
+    """ food class """
     def __init__(self):
         """ Initialize empty Order list"""
         self.conn = dbcon()
@@ -410,13 +428,19 @@ class Food(object):
 
     def create_food(self, food_name, food_price, food_image):
         """Create food_item"""
-        self.cur.execute(
-            "INSERT INTO  tbl_foods(food_name, food_price, food_image)\
-        VALUES(%(food_name)s, %(food_price)s, %(food_image)s);", {
-            'food_name': food_name, 'food_price': food_price,\
-                'food_image': food_image})
-        self.conn.commit()
-        return jsonify({"message": "Successful. Food Created"}), 201
+        #check if food is created before
+        self.cur.execute("SELECT * FROM tbl_foods WHERE food_name=%(food_name)s",
+                         {'food_name': food_name})
+        if self.cur.rowcount > 0:
+            return jsonify({"message": "Ooops! Food already exists."}), 400
+        else:
+            self.cur.execute(
+                "INSERT INTO  tbl_foods(food_name, food_price, food_image)\
+            VALUES(%(food_name)s, %(food_price)s, %(food_image)s);", {
+                'food_name': food_name, 'food_price': food_price,\
+                    'food_image': food_image})
+            self.conn.commit()
+            return jsonify({"message": "Successful. Food Created"}), 201
 
     def get_foods(self):
         """ get all Foods """
@@ -435,7 +459,7 @@ class Food(object):
                 "message": "Successful. Food Found",
                 "Foods": self.result}), 200
         return jsonify({
-            "message": "No Food."}), 400
+            "message": "No Food."}), 200
 
     def update_food(self, food_id, food_name, food_price, food_image):
         """ update Food """
@@ -448,7 +472,7 @@ class Food(object):
             WHERE food_id=%s", (food_name, food_price, food_image, food_id))
             self.conn.commit()
             return jsonify({"message": "Update Successful"}), 201
-        return jsonify({"message": "No Food."}), 200
+        return jsonify({"message": "No Food."}), 400
 
     def get_food(self, food_id):
         """ get specific Food """
@@ -465,7 +489,7 @@ class Food(object):
                 "message": "Successful. Food Found",
                 "Foods": self.foodlist}), 200
         return jsonify({
-            "message": "No Food."}), 200
+            "message": "No Food."}), 400
 
     def delete_food(self, food_id):
         """ delete Food """
@@ -479,4 +503,4 @@ class Food(object):
             self.conn.commit()
             return jsonify({
                 "message": "Delete Successful."}), 201
-        return jsonify({"message": "No Food."}), 200
+        return jsonify({"message": "No Food."}), 400

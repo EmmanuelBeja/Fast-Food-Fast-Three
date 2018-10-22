@@ -1,8 +1,8 @@
 """jwt auth"""
 from datetime import datetime
+from flask import request
 import jwt
 from .database.conn import dbcon
-from flask import request, jsonify
 
 class Auth(object):
     """jwt auth"""
@@ -32,7 +32,28 @@ class Auth(object):
                 (token, status))
             if self.cur.fetchone():
                 return True
-            else:
-                return False
+            return False
         except Exception:
             return False
+
+def is_admin_loggedin():
+    """ check if a user is an admin logged in"""
+    header = request.headers.get('authorization')
+    token = header.split(" ")[1]
+    token = jwt.decode(token, 'SECRET_KEY', algorithms=['HS256'])
+    user_id = token['userid']
+    conn = dbcon()
+    cur = conn.cursor()
+    cur.execute("SELECT * FROM tbl_users WHERE userid=%(userid)s AND userRole=%(userrole)s",\
+    {'userid': user_id, 'userrole': 'admin'})
+    if cur.rowcount > 0:
+        return True
+    return False
+
+def get_logged_in_user_id():
+    """get logged in user id"""
+    header = request.headers.get('authorization')
+    token = header.split(" ")[1]
+    token = jwt.decode(token, 'SECRET_KEY', algorithms=['HS256'])
+    user_id = token['userid']
+    return user_id    

@@ -1,35 +1,13 @@
 """/app/v1/orders/views.py"""
 from functools import wraps
 import jwt
-from flask import request, jsonify, session, render_template
+from flask import request, jsonify
 from . import orders_api
-from app.models import Order
-from app.jwt import Auth
-from app.database.conn import dbcon
+from app.v2.models import Order
+from app.jwt_file import Auth, is_admin_loggedin, get_logged_in_user_id
 
 jwt_auth = Auth()
 
-conn = dbcon()
-cur = conn.cursor()
-
-def is_admin_loggedin():
-    """ check if a user is an admin logged in"""
-    header = request.headers.get('authorization')
-    token = header.split(" ")[1]
-    token = jwt.decode(token, 'SECRET_KEY', algorithms=['HS256'])
-    user_id = token['userid']
-    cur.execute("SELECT * FROM tbl_users WHERE userid=%(userid)s AND userRole=%(role)s",\
-    {'userid': user_id, 'role': 'admin'})
-    if cur.rowcount > 0:
-        return True
-    return False
-
-def get_logged_in_user_id():
-    header = request.headers.get('authorization')
-    token = header.split(" ")[1]
-    token = jwt.decode(token, 'SECRET_KEY', algorithms=['HS256'])
-    user_id = token['userid']
-    return user_id
 
 def token_required(f):
     """check"""
@@ -67,46 +45,16 @@ def token_required(f):
 
 orderObject = Order()
 
-def validate_create_data(data):
-    """validate order details"""
-    try:
-        if " " in data["food_id"]:
-            return "food_id should be one word, no spaces"
-        # check if food_id is empty
-        elif data["food_id"] == "":
-            return "food_id required"
-        # check if id is int
-        elif data["food_id"].isalpha():
-            return "Required to be an integer"
-        # check if client_adress is empty
-        elif data["client_adress"] == "":
-            return "client_adress required"
-        else:
-            return "valid"
-    except Exception as error:
-        return "please provide all the fields, missing " + str(error)
-
-
 def validate_update_data(data):
     """validate order details"""
     try:
-        if " " in data["food_id"]:
-            return "food_id should be one word, no spaces"
-        # check if food_id is empty
-        elif data["food_id"] == "":
-            return "food_id required"
-        # check if id is int
-        elif data["food_id"].isalpha():
-            return "Required to be an integer"
-        # check if client_adress is empty
-        elif data["client_adress"] == "":
-            return "client_adress required"
-        #check statuses
-        elif data["status"].lower() != "pending" or data["status"].lower() != "accepted" or\
-            data["status"].lower() != "declined" or data["status"].lower() != "completed":
-            return "Wrong order status. Allowed statuses: accepted, declined, completed"
+        if data["status"] == "":
+            return "status required"
+        elif data["status"].lower() == "pending" or data["status"].lower() == "accepted"\
+        or data["status"].lower() == "declined" or data["status"].lower() == "completed":
+            return 'valid'
         else:
-            return "valid"
+            return "Wrong order status. Allowed statuses: accepted, declined, completed"
     except Exception as error:
         return "please provide all the fields, missing " + str(error)
 
@@ -115,9 +63,10 @@ def validate_update_data(data):
 def order():
     """ Place an order for food."""
     data = request.get_json()
-    #food_id = data['food_id']
     client_id = get_logged_in_user_id()
     client_adress = data['client_adress']
+    if client_adress == "":
+        return jsonify({"message": "adress required"}), 400
     response = orderObject.create_order(
         client_id,
         client_adress)
@@ -127,24 +76,31 @@ def order():
 @orders_api.route('/users/pick_food/<int:food_id>', methods=["GET"])
 def pick_food(food_id):
     """ Pick food in menu."""
-    #add food to a session dict with food id and quantity
-    response = orderObject.add_to_cart(food_id)
+    client_id = get_logged_in_user_id()
+    response = orderObject.add_to_cart(food_id, client_id)
     return response
 
+@orders_api.route('/users/cart_cancel', methods=["GET"])
+def cart_cancel():
+    """ cancel order."""
+    client_id = get_logged_in_user_id()
+    response = orderObject.cart_cancel(client_id)
+    return response
 
 @orders_api.route('/users/cart_quantity', methods=["GET"])
 def cart_quantity():
     """ Get cart quantity."""
     #return quantity session with food items picked
-    response = orderObject.cart_quantity()
+    client_id = get_logged_in_user_id()
+    response = orderObject.cart_quantity(client_id)
     return response
-
 
 @orders_api.route('/users/cart', methods=["GET"])
 def cart():
     """ Get all picked food."""
     #return quantity session with food items picked
-    response = orderObject.cart_details()
+    client_id = get_logged_in_user_id()
+    response = orderObject.cart_details(client_id)
     return response
 
 
@@ -171,20 +127,16 @@ def order_manipulation(order_id):
         elif request.method == 'PUT':
             # PUT Update the status  of an order
             data = request.get_json()
-            food_id = data['food_id']
-            client_id = get_logged_in_user_id()
-            client_adress = data['client_adress']
-            status = data['status'].lower()
-            res = orderObject.update_order(
-                order_id,
-                food_id,
-                client_id,
-                client_adress,
-                status)
+            response = validate_update_data(data)
+            if response == "valid":
+                status = data['status'].lower()
+                res = orderObject.update_order(order_id, status)
+                return res
+            return jsonify({"message": response}), 400
+        else:
+            # GET gets a specific order
+            res = orderObject.get_order(order_id)
             return res
-        # GET gets a specific order
-        res = orderObject.get_order(order_id)
-        return res
     return jsonify({
         "message": "You dont have admin priviledges."}), 401
 
