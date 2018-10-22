@@ -3,7 +3,7 @@ import os
 import psycopg2
 
 
-from .create_table import queries
+from .tables import queries
 
 def dbcon():
     """db connection"""

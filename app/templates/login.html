@@ -69,57 +69,6 @@
       © Copyright. All Rights Reserved
   </footer>
   <!-- footer end -->
-
-  <script type="text/javascript">
-
-  login = () => {
-    username = document.getElementById('username').value;
-    password = document.getElementById('password').value;
-
-    fetch('https://emmanuelbeja-fast-food-fast.herokuapp.com/v2/auth/login',
-    {
-      method: 'POST',
-      body: JSON.stringify({
-        username: username,
-        password: password
-      }),
-      mode: 'cors',
-      crossdomain: true,
-      headers: { 'Content-Type': 'application/json; charset=utf-8'}
-    })
-    .then(response => response.json())
-    .then(data => {
-      console.log(data)
-      message = document.getElementById('message');
-      message.style.backgroundColor = "#5bc0de";
-      message.style.borderLeft = "5px solid orange";
-      message.style.color = "white";
-      message.style.padding = "5px";
-      message.style.width = "100%";
-      message.style.display = "block";
-      message.style.borderRadius = "5px";
-      message.innerHTML = data.message;
-
-      token = data.token;
-      window.sessionStorage.setItem('token', token);
-
-      userrole = data.userrole;
-      window.sessionStorage.setItem('userrole', userrole);
-
-      redirect = () => {
-        if(data.message=='You are successfully logged in') {
-          if(userrole=='admin'){
-            location.replace("/a-home");
-          }else{
-            location.replace("/menu");
-            console.log('client');
-          }
-         }
-      }
-      setTimeout( redirect,1000);
-    })
-  }
-
-  </script>
+  <script src="static/js/login.js" charset="utf-8"></script>
   </body>
 </html>

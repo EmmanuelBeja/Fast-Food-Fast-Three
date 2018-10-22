@@ -3,33 +3,17 @@ from functools import wraps
 import jwt
 from flask import request, jsonify
 from . import food_api
-from app.models import Food
-from app.jwt_file import Auth
-from app.database.conn import dbcon
+from app.v2.models import Food
+from app.jwt_file import Auth, is_admin_loggedin
 
 jwt_auth = Auth()
-
-
-def is_admin_loggedin():
-    """ check if a user is an admin logged in"""
-    header = request.headers.get('authorization')
-    token = header.split(" ")[1]
-    token = jwt.decode(token, 'SECRET_KEY', algorithms=['HS256'])
-    user_id = token['userid']
-    conn = dbcon()
-    cur = conn.cursor()
-    cur.execute("SELECT * FROM tbl_users WHERE userid=%(userid)s AND userRole=%(userrole)s",\
-    {'userid': user_id, 'userrole': 'admin'})
-    if cur.rowcount > 0:
-        return True
-    return False
 
 def token_required(f):
     """check"""
     @wraps(f)
     def decorated(**kwargs):
         """decorator"""
-        header = request.headers.get('Authorization')
+        header = request.headers.get('authorization')
 
         if header is None:
             return jsonify({"message": "Authorization header missing"}), 403
@@ -48,7 +32,7 @@ def token_required(f):
                 except jwt.InvalidTokenError:
                     # token invalid blacklist token
                     jwt_auth.blacklist(token)
-                    return jsonify({'message': 'Invalid Token. Please login'}), 403
+                    return jsonify({'message': 'Invalid Token. Please login'}), 401
             else:
                 return jsonify({'message': 'Token blacklisted. Please login'}), 401
         except BaseException:
@@ -56,7 +40,6 @@ def token_required(f):
 
         return f(**kwargs)
     return decorated
-
 
 foodObject = Food()
 
@@ -93,7 +76,6 @@ def create_food():
             food_image = data['food_image']
             response = foodObject.create_food(food_name, food_price, food_image)
             return response
-        print(res)
         return jsonify({"message": res}), 400
     return jsonify({
         "message": "You dont have admin priviledges."}), 401
@@ -115,23 +97,24 @@ def food_manipulation(food_id):
             # DELETE
             res = foodObject.delete_food(food_id)
             return res
-
         elif request.method == 'PUT':
             # PUT
             data = request.get_json()
-            res = validate_data(data)
-            if res == "valid":
+            response = validate_data(data)
+            if response == "valid":
                 food_name = data['food_name']
                 food_price = data['food_price']
                 food_image = data['food_image']
-                res = foodObject.update_food(
+                response = foodObject.update_food(
                     food_id,
                     food_name,
                     food_price,
                     food_image)
 
+            return response
+        else:
+            #GET
+            res = foodObject.get_food(food_id)
             return res
-        res = foodObject.get_food(food_id)
-        return res
     return jsonify({
         "message": "You dont have admin priviledges."}), 401
