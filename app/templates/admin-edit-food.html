@@ -40,7 +40,7 @@
              <div class="box-col-3">
                <div class="panel">
                   <div class="">
-                    <div class="form" enctype="multipart/form-data">
+                    <form class="form" enctype="multipart/form-data">
                       <span id="message"></span>
                       <div class="">
                         <label for="food-name">Food Name</label>
@@ -52,9 +52,9 @@
                       </div>
                       <br>
                       <div class="">
-                        <button type="submit" name="button" onclick="editfood()" class="btn-brown btn-large">Submit</button>
+                        <button type="button" name="button" onclick="editfood()" class="btn-brown btn-large">Submit</button>
                       </div>
-                    </div>
+                    </form>
                   </div>
                 </div>
              </div>
@@ -70,7 +70,16 @@
       © Copyright. All Rights Reserved
   </footer>
   <!-- footer end -->
-
+  <script type="text/javascript">
+  let food_name = document.getElementById('food_name').value;
+  let food_price = document.getElementById('food_price').value;
+  let food_image = food_name+'.jpg';
+  </script>
   <script src="static/js/admin-edit-food.js" charset="utf-8"></script>
+  <script type="text/javascript">
+  is_admin_logged_in();
+  editing();
+  edited_food_details(food_id);
+  </script>
   </body>
 </html>
