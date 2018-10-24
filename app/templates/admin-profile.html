@@ -71,54 +71,6 @@
       © Copyright. All Rights Reserved
   </footer>
   <!-- footer end -->
-
-  <script type="text/javascript">
-  //check if token was created/ user is logged in
-  if(!window.sessionStorage.getItem('token')){
-    location.replace("/");
-  }else {
-    //check role
-    userrole = window.sessionStorage.getItem('userrole');
-    if (userrole!='admin') {
-      location.replace("/menu");
-    }
-    token = window.sessionStorage.getItem('token');
-  }
-
-  editprofile = () => {
-    username = document.getElementById('username').value;
-    userphone = document.getElementById('userphone').value;
-    password = document.getElementById('password').value;
-    confirmpass = document.getElementById('confirmpass').value;
-
-    fetch('https://emmanuelbeja-fast-food-fast.herokuapp.com/v2/users',
-    {
-      method: 'PUT',
-      body: JSON.stringify({
-        username: username,
-        userphone: userphone,
-        password: password,
-        confirmpass: confirmpass
-      }),
-      mode: 'cors',
-      crossdomain: true,
-      headers: { 'Content-Type': 'application/json; charset=utf-8', 'Authorization': 'Bearer '+token}
-    })
-    .then(response => response.json())
-    .then(data => {
-      console.log(data)
-      message = document.getElementById('message');
-      message.style.backgroundColor = "#5bc0de";
-      message.style.borderLeft = "5px solid orange";
-      message.style.color = "white";
-      message.style.padding = "5px";
-      message.style.width = "100%";
-      message.style.display = "block";
-      message.style.borderRadius = "5px";
-      message.innerHTML = data.message;
-    })
-  }
-  </script>
-
+  <script src="static/js/admin-profile.js" charset="utf-8"></script>
   </body>
 </html>

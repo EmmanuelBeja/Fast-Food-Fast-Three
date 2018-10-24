@@ -3,35 +3,11 @@ from functools import wraps
 import jwt
 from flask import request, jsonify
 from . import users_api
-from app.models import User
-from app.jwt_file import Auth
-from app.database.conn import dbcon
+from app.v2.models import User
+from app.jwt_file import Auth, is_admin_loggedin, get_logged_in_user_id
 
 jwt_auth = Auth()
 userObject = User()
-
-
-def is_admin_loggedin():
-    """ check if a user is an admin logged in"""
-    header = request.headers.get('authorization')
-    token = header.split(" ")[1]
-    token = jwt.decode(token, 'SECRET_KEY', algorithms=['HS256'])
-    user_id = token['userid']
-    conn = dbcon()
-    cur = conn.cursor()
-    cur.execute("SELECT * FROM tbl_users WHERE userid=%(userid)s AND userRole=%(role)s",\
-    {'userid': user_id, 'role': 'admin'})
-    if cur.rowcount > 0:
-        return True
-    return False
-
-def get_logged_in_user_id():
-    """get logged in user id"""
-    header = request.headers.get('authorization')
-    token = header.split(" ")[1]
-    token = jwt.decode(token, 'SECRET_KEY', algorithms=['HS256'])
-    user_id = token['userid']
-    return user_id
 
 def token_required(f):
     """check"""
@@ -57,7 +33,7 @@ def token_required(f):
                 except jwt.InvalidTokenError:
                     # token invalid blacklist token
                     jwt_auth.blacklist(token)
-                    return jsonify({'message': 'Invalid Token. Please login'}), 403
+                    return jsonify({'message': 'Invalid Token. Please login'}), 401
             else:
                 return jsonify({'message': 'Token blacklisted. Please login'}), 401
         except BaseException:
@@ -65,7 +41,6 @@ def token_required(f):
 
         return f(**kwargs)
     return decorated
-
 
 def validate_data_signup(data):
     """validate user details"""
@@ -105,11 +80,8 @@ def validate_data_signup(data):
 def validate_data_login(data):
     """validate user details"""
     try:
-        # check if the username is more than 3 characters
-        if len(data['username'].strip()) < 3:
-            return "username must be more than 3 characters"
         # check if password has spaces
-        elif " " in data["password"]:
+        if " " in data["password"]:
             return "password should be one word, no spaces"
         # check if password is empty
         elif data["password"] == "":
