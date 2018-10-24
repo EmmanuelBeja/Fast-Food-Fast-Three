@@ -33,7 +33,7 @@
              <div class="box-col-8">
                <div class="panel">
                  <div class="">
-                   <div class="form">
+                   <form class="form">
                      <span id="message"></span>
                      <div class="">
                        <label for="userName">User Name</label>
@@ -53,9 +53,9 @@
                      </div>
                      <br>
                      <div class="">
-                       <button type="submit" name="button" onclick="editprofile()" class="btn-orange btn-large btn-wide">Submit</button>
+                       <button type="button" name="button" onclick="editprofile()" class="btn-orange btn-large btn-wide">Submit</button>
                      </div>
-                   </div>
+                   </form>
                  </div>
                </div>
              </div>
@@ -71,6 +71,15 @@
       © Copyright. All Rights Reserved
   </footer>
   <!-- footer end -->
+  <script type="text/javascript">
+  let username = document.getElementById('username').value;
+  let userphone = document.getElementById('userphone').value;
+  let password = document.getElementById('password').value;
+  let confirmpass = document.getElementById('confirmpass').value;
+  </script>
   <script src="static/js/admin-profile.js" charset="utf-8"></script>
+  <script type="text/javascript">
+  is_admin_logged_in();
+  </script>
   </body>
 </html>

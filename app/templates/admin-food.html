@@ -42,7 +42,7 @@
                <div class="box-col-3">
                  <div class="panel">
                     <div class="">
-                      <div class="form" enctype="multipart/form-data">
+                      <form class="form" enctype="multipart/form-data">
                         <h4>Add Food Item</h4>
                         <span id="message"></span>
                         <div class="">
@@ -66,9 +66,9 @@
                         </div>
                         <br>
                         <div class="">
-                          <button type="submit" name="button" onclick="addfood()" class="btn-brown btn-large">Submit</button>
+                          <button type="button" name="button" onclick="addfood()" class="btn-brown btn-large">Submit</button>
                         </div>
-                      </div>
+                      </form>
                     </div>
                   </div>
                </div>
@@ -84,6 +84,15 @@
       © Copyright. All Rights Reserved
   </footer>
   <!-- footer end -->
+  <script type="text/javascript">
+  let food_name = document.getElementById('food_name').value;
+  let food_price = document.getElementById('food_price').value;
+  let food_image = food_name+'.jpg';
+  </script>
   <script src="static/js/admin-food.js" charset="utf-8"></script>
+  <script type="text/javascript">
+  is_admin_logged_in();
+  admin_menu();
+  </script>
   </body>
 </html>

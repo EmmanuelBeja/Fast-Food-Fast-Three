@@ -74,6 +74,7 @@ def order():
 
 
 @orders_api.route('/users/pick_food/<int:food_id>', methods=["GET"])
+@token_required
 def pick_food(food_id):
     """ Pick food in menu."""
     client_id = get_logged_in_user_id()
@@ -81,6 +82,7 @@ def pick_food(food_id):
     return response
 
 @orders_api.route('/users/cart_cancel', methods=["GET"])
+@token_required
 def cart_cancel():
     """ cancel order."""
     client_id = get_logged_in_user_id()
@@ -88,6 +90,7 @@ def cart_cancel():
     return response
 
 @orders_api.route('/users/cart_quantity', methods=["GET"])
+@token_required
 def cart_quantity():
     """ Get cart quantity."""
     #return quantity session with food items picked
@@ -96,6 +99,7 @@ def cart_quantity():
     return response
 
 @orders_api.route('/users/cart', methods=["GET"])
+@token_required
 def cart():
     """ Get all picked food."""
     #return quantity session with food items picked

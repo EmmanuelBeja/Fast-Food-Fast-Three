@@ -26,6 +26,11 @@ def create_app(config_name):
     from .v2.users import users_api as api_blueprint
     app.register_blueprint(api_blueprint, url_prefix='/v2')
 
+    @app.route('/tests')
+    def tests():
+        """tests page"""
+        return render_template('testrunner.html')
+
     @app.route('/')
     def index():
         """index page"""

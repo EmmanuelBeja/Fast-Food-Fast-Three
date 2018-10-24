@@ -45,7 +45,7 @@
              <div class="box-col-3">
                <div class="panel">
                   <div class="">
-                   <div class="form">
+                   <form class="form">
                      <span id="message"></span>
                      <div class="">
                        <label for="adress">Adress</label>
@@ -53,9 +53,9 @@
                      </div>
                      <br>
                      <div class="">
-                       <button type="submit" name="button" onclick="order()" class="btn-orange btn-large btn-wide">Order Now.</button>
+                       <button type="button" name="button" onclick="order()" class="btn-orange btn-large btn-wide">Order Now.</button>
                      </div>
-                   </div>
+                   </form>
                   </div>
                 </div>
              </div>
@@ -71,6 +71,14 @@
       © Copyright. All Rights Reserved
   </footer>
   <!-- footer end -->
+  <script type="text/javascript">
+    let adress = document.getElementById('adress').value;
+  </script>
   <script src="static/js/user-order.js" charset="utf-8"></script>
+  <script type="text/javascript">
+  is_logged_in();
+  cart();
+  cart_details();
+  </script>
   </body>
 </html>

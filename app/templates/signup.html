@@ -38,7 +38,7 @@
          <div class="box-col-3">
            <div class="panel">
              <div class="">
-              <div class="form">
+              <form class="form">
                 <h4 style="">Signup</h4>
                 <span id="message"></span>
                 <div class="">
@@ -59,10 +59,10 @@
                 </div>
                 <br>
                 <div class="">
-                  <button type="submit" name="button" onclick="signup()" class="btn-orange btn-large btn-wide">Submit</button>
+                  <button type="button" name="button" onclick="signup()" class="btn-orange btn-large btn-wide">Submit</button>
                 </div>
                 Already have an account? <a href="/login">Login</a>
-              </div>
+              </form>
              </div>
            </div>
          </div>
@@ -77,6 +77,12 @@
       © Copyright. All Rights Reserved
   </footer>
   <!-- footer end -->
+  <script type="text/javascript">
+  let username = document.getElementById('username').value;
+  let userphone = document.getElementById('userphone').value;
+  let password = document.getElementById('password').value;
+  let confirmpass = document.getElementById('confirmpass').value;
+  </script>
   <script src="static/js/signup.js" charset="utf-8"></script>
   </body>
 </html>

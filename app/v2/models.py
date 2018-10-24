@@ -6,6 +6,7 @@ import jwt
 from app.database.conn import dbcon
 from app.jwt_file import Auth
 
+
 jwt_object = Auth()
 
 
@@ -229,9 +230,9 @@ class Order(object):
                 self.result.append(dict(self.orderlist))
             return jsonify({
                 "message": "Successful. Orders Found.",
-                "Orders": self.result}), 200
+                "Orders": self.result, "status": "Ok"}), 200
         return jsonify({
-            "message": "No Order."}), 200
+            "message": "No Order.", "status": "Ok"}), 200
 
     def get_order(self, order_id):
         """ get Order """
@@ -279,10 +280,10 @@ class Order(object):
                 self.result.append(dict(self.orderlist))
             return jsonify({
                 "message": "Successful. User orders found.",
-                "Orders": self.result}), 200
+                "Orders": self.result, "status": "Ok"}), 200
 
         return jsonify({
-            "message": "No Order."}), 400
+            "message": "No Order.", "status": "Ok"}), 400
 
 
     def add_to_cart(self, food_id, client_id):
@@ -321,7 +322,7 @@ class Order(object):
                              'price': price, 'quantity': quantity, 'total': price})
             self.conn.commit()
 
-        return jsonify({"message": "Added to cart."}), 201
+        return jsonify({"message": "Added to cart.", "status": "Ok"}), 201
 
     def cart_cancel(self, client_id):
         """cancel order"""
@@ -344,7 +345,7 @@ class Order(object):
                 total = int(total)+int(order[5])
                 totalprice = int(totalprice)+int(order[6])
 
-        return jsonify({'Cart': total, 'totalprice': totalprice}), 200
+        return jsonify({'Cart': total, 'totalprice': totalprice, 'message': 'Success'}), 200
 
 
     def cart_details(self, client_id):
@@ -369,7 +370,7 @@ class Order(object):
                     })
                 cart.append(dict(cartlist))
 
-        return jsonify({'Cart': cart, 'totalprice': totalprice}), 200
+        return jsonify({'Cart': cart, 'totalprice': totalprice, 'message': 'Success'}), 200
 
 
     def update_order(
@@ -457,9 +458,9 @@ class Food(object):
                 self.result.append(dict(self.foodlist))
             return jsonify({
                 "message": "Successful. Food Found",
-                "Foods": self.result}), 200
+                "Foods": self.result, "status": "Ok"}), 200
         return jsonify({
-            "message": "No Food."}), 200
+            "message": "No Food.", "status": "Ok"}), 200
 
     def update_food(self, food_id, food_name, food_price, food_image):
         """ update Food """
@@ -471,8 +472,8 @@ class Food(object):
                 "UPDATE tbl_foods SET food_name=%s, food_price=%s, food_image=%s\
             WHERE food_id=%s", (food_name, food_price, food_image, food_id))
             self.conn.commit()
-            return jsonify({"message": "Update Successful"}), 201
-        return jsonify({"message": "No Food."}), 400
+            return jsonify({"message": "Update Successful", "status": "Ok"}), 201
+        return jsonify({"message": "No Food.", "status": "Ok"}), 400
 
     def get_food(self, food_id):
         """ get specific Food """
@@ -487,9 +488,9 @@ class Food(object):
                 'food_image': rows[3]})
             return jsonify({
                 "message": "Successful. Food Found",
-                "Foods": self.foodlist}), 200
+                "Foods": self.foodlist, "status": "Ok"}), 200
         return jsonify({
-            "message": "No Food."}), 400
+            "message": "No Food.", "status": "Ok"}), 400
 
     def delete_food(self, food_id):
         """ delete Food """
@@ -502,5 +503,5 @@ class Food(object):
                     'food_id': food_id})
             self.conn.commit()
             return jsonify({
-                "message": "Delete Successful."}), 201
-        return jsonify({"message": "No Food."}), 400
+                "message": "Delete Successful.", "status": "Ok"}), 201
+        return jsonify({"message": "No Food.", "status": "Ok"}), 400
