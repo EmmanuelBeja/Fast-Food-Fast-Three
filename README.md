@@ -14,30 +14,30 @@
 
   ## Use the following endpoints to perform the specified tasks
 
-  | 	Endpoint                           | Functionality                                  | |                  
-  | ----------------------------------   | -----------------------------------------------|
-  | POST /v2/users/orders                | Create an order                                |
-  | GET /v2/orders/                      | Retrieve posted orders                         |
-  | PUT /v2/orders/<int:order_id>        | Update a specific order                        | |                                      |                                                |
-  | GET /v2/orders/<int:order_id>        | Get a specific posted order                    |
-  | DELETE /v2/orders/<int:order_id>     | DELETE a specific posted order                 |
-  | GET /v2/users/pick_food/<int:food_id>| Add food to cart                               |
-  | GET /v2/users/cart_cancel            | Clear Cart                                     |
-  | GET /v2/users/cart_quantity          | Get cart price and quantity                    |
-  | GET /v2/users/cart                   | Get details of the cart                        |
-  | GET /v2/users/orders/<int:order_id>  | GET a specific user's orders                   |
-  | POST /v2/menu                        | Create food item                               |
-  | GET /v2/menu                         | Retrieve posted food                           |
-  | PUT /v2/food/<int:food_id>           | Update a specific food                         | |                                      |                                                |
-  | GET /v2/food/<int:food_id>           | Get a specific posted food                     |
-  | DELETE /v2/food/<int:food_id>        | DELETE a specific posted food                  |
-  | POST /v2/auth/signup                 | Sign up User                                   |
-  | POST /v2/auth/login                  | Login User                                     |
-  | PUT /v2/users/<int:id>               | Update a specific user                         | |                                      |                                                |
-  | GET /v2/users/<int:id>               | Get a specific signed up user                  |
-  | DELETE /v2/users/<int:id>            | DELETE a specific signed up user               |
-  | GET /v2/users                        | Get all signed up users                        |
-  | GET /v2/auth/logout                  | Logout a user                                  |
+  | 	Endpoint                          |Functionality                                             
+  | ----------------------------------  | ----------------------------------------------|
+  | POST/v2/users/orders                | Create an order                               |
+  | GET/v2/orders/                      | Retrieve posted orders                        |
+  | PUT/v2/orders/<int:order_id>        | Update a specific order                       |
+  | GET/v2/orders/<int:order_id>        | Get a specific posted order                   |
+  | DELETE/v2/orders/<int:order_id>     | DELETE a specific posted order                |
+  | GET/v2/users/pick_food/<int:food_id>| Add food to cart                              |
+  | GET/v2/users/cart_cancel            | Clear Cart                                    |
+  | GET/v2/users/cart_quantity          | Get cart price and quantity                   |
+  | GET/v2/users/cart                   | Get details of the cart                       |
+  | GET/v2/users/orders/<int:order_id>  | GET a specific user's orders                  |
+  | POST/v2/menu                        | Create food item                              |
+  | GET/v2/menu                         | Retrieve posted food                          |
+  | PUT/v2/food/<int:food_id>           | Update a specific food                        |
+  | GET /v2/food/<int:food_id>          | Get a specific posted food                    |
+  | DELETE /v2/food/<int:food_id>       | DELETE a specific posted food                 |
+  | POST /v2/auth/signup                | Sign up User                                  |
+  | POST /v2/auth/login                 | Login User                                    |
+  | PUT /v2/users/<int:id>              | Update a specific user                        |
+  | GET /v2/users/<int:id>              | Get a specific signed up user                 |
+  | DELETE /v2/users/<int:id>           | DELETE a specific signed up user              |
+  | GET/v2/users                        | Get all signed up users                       |
+  | GET/v2/auth/logout                  | Logout a user                                 |
 
   ## Application Features
 
