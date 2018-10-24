@@ -17,6 +17,6 @@ before_script:
   - psql -c 'create database fastfoodfasttests;' -U postgres
   - psql -c "CREATE USER emmanuelbeja WITH PASSWORD '#1Emmcodes';" -U postgres
 
-script: pytest --cov=app/tests/
+script: pytest --cov=app/v2/
 
 after_success: coveralls
