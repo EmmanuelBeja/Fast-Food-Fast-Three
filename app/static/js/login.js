@@ -5,7 +5,7 @@ login = (username, password) => {
     password = document.getElementById('password').value;
   }
 
-  return fetch('http://127.0.0.1:5000/v2/auth/login', {
+  return fetch('/v2/auth/login', {
     method: 'POST',
     body: JSON.stringify({
       username: username,
