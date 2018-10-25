@@ -182,9 +182,9 @@ Button End
 }
 .input{
   display: block;
-  width: 100%;
+  width: 95%;
   height: 20px;
-  padding: 7px 13px;
+  padding: 7px;
   font-size: 15px;
   border-radius: 5px;
   border: 1px solid #abaaaa;
@@ -197,9 +197,7 @@ Button End
 	padding: 20px;
 	border-radius: 4px;
 }
-.form{
-  margin:0 20px 0 0;
-}
+
 
 .form h4{
   margin:5px auto;

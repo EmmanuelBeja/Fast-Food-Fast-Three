@@ -35,25 +35,17 @@
                  <div class="">
                    <form class="form">
                      <span id="message"></span>
-                     <div class="">
                        <label for="userName">User Name</label>
                        <input type="text" name="username" value="" class="input" id="username" placeholder="User Name" required>
-                     </div>
-                     <div class="">
                        <label for="userphone"> User Phone</label>
-                       <input type="text" name="userphone" value="" class="input" id="userphone" placeholder="Phone Number" required>
-                     </div>
-                     <div class="">
+                       <input type="text" name="userphone" value="" class="input" id="userphone" placeholder="Phone Number" pattern=".{10,10}" title="10 characters" minlength="10" maxlength="10" required>
                        <label for="password"> Password</label>
-                       <input type="password" name="password" value="" class="input" id="password" placeholder="Password" required>
-                     </div>
-                     <div class="">
+                       <input type="password" name="password" value="" class="input" id="password" placeholder="Password" pattern=".{5,}" required>
                        <label for="confirmpass"> Confirm Password</label>
-                       <input type="password" name="confirmpass" value="" class="input" id="confirmpass" placeholder="Confirm Password" required>
-                     </div>
+                       <input type="password" name="confirmpass" value="" class="input" id="confirmpass" placeholder="Confirm Password" pattern=".{5,}" required>
                      <br>
                      <div class="">
-                       <button type="button" name="button" onclick="editprofile()" class="btn-orange btn-large btn-wide">Submit</button>
+                       <button type="button" name="button" onclick="editprofile()" class="btn-orange btn-large">Submit</button>
                      </div>
                    </form>
                  </div>

@@ -7,7 +7,7 @@ signup = (username, userphone, password,  confirmpass) => {
     confirmpass = document.getElementById('confirmpass').value;
   }
 
-  return fetch('http://127.0.0.1:5000/v2/auth/signup', {
+  return fetch('/v2/auth/signup', {
     method: 'POST',
     body: JSON.stringify({
       username: username,
