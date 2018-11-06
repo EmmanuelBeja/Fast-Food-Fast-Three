@@ -1,7 +1,6 @@
 is_logged_in = () => {
  //check if token was created/ user is logged in
  if(!window.sessionStorage.getItem('token')){
-   return "not logged in";
    location.replace("/");
  }else {
    token = window.sessionStorage.getItem('token');
