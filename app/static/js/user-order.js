@@ -1,36 +1,18 @@
 is_logged_in = () => {
- //check if token was created/ user is logged in
- if(!window.sessionStorage.getItem('token')){
-   location.replace("/");
+ //check role
+ if( sessionStorage.getItem('token')!= null){
+   let token = sessionStorage.getItem('token');
+   return token;
  }else {
-   token = window.sessionStorage.getItem('token');
-   return "logged in";
+   location.replace('/')
  }
 }
 
-
-cart = () => {
-  //fetch cart quantity and totalprice
-  return fetch('/v2/users/cart_quantity', {
-    mode: 'cors',
-    crossdomain: true,
-    headers: { 'Content-Type': 'application/json; charset=utf-8', 'Authorization': 'Bearer '+token }
-  })
-  .then(response => response.json())
-  .then(data => {
-    const cart_quantity = document.getElementById('cart');
-    if (cart_quantity != null) {
-      cart_quantity.innerHTML = data.Cart
-      const cart_total_price = document.getElementById('cart_total_price');
-      cart_total_price.innerHTML = data.totalprice
-    }
-    res = data.message;
-  }).then(message => res)
-}
-
-
-cart_details = () => {
+cart_details = token => {
   //fetch cart details
+  if (token == undefined ) {
+    token = is_logged_in();
+  }
   return fetch('/v2/users/cart', {
     mode: 'cors',
     crossdomain: true,
@@ -46,7 +28,11 @@ cart_details = () => {
     cartdata = document.getElementById('cartdata');
     if (cartdata != null) {
       cart.forEach(function(cartitem){
-        cartdata.innerHTML += '<div class="list-item"><div class="box-col-8">'+cartitem.food_name+' | Price: Ksh.'+cartitem.price+' | Qty: '+cartitem.quantity+'</div></div>';
+        cartdata.innerHTML += '<tr>'+
+           '<td>'+cartitem.food_name+'</td>'+
+           '<td>Ksh.'+cartitem.price+'</td>'+
+           '<td>'+cartitem.quantity+'</td>'+
+         '</tr>';
       });
       cartdata.innerHTML +='<div class="list-item"><div class="box-col-8">Total: Ksh. '+data.totalprice+'</div></div>'
     }
@@ -56,9 +42,10 @@ cart_details = () => {
 
 
 //place order function
-order = (adress) => {
+order = (adress, token) => {
   if (adress == undefined) {
     adress = document.getElementById('adress').value;
+    token = is_logged_in();
   }
   return fetch('/v2/users/orders', {
     method: 'POST',
@@ -84,7 +71,10 @@ order = (adress) => {
   }).then(message => res)
 }
 
-cancel = () => {
+cancel = token => {
+  if (token == undefined ) {
+    token = is_logged_in();
+  }
   return fetch('/v2/users/cart_cancel', {
     mode: 'cors',
     crossdomain: true,

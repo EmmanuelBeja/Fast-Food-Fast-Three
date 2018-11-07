@@ -5,6 +5,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Fast Food Fast</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <style media="screen">
+
+    </style>
   </head>
   <body>
 
@@ -15,12 +18,13 @@
       <nav class="navbar-default nav-top">
         <div class="nav-container">
           <a class="navbar-brand" href="/">Fast Food Fast</a>
-
-          <ul class="nav-right">
-            <li class="navbar-brand-responsive"> <a href="/">Fast Food Fast</a></li>
-            <li><a href="/signup" class="btn-orange btn-small">Signup</a></li>
-            <li><a href="/login" class="btn-normal btn-small">Login</a></li>
-          </ul>
+           <span class="dropdown">
+             <span> <img src="static/img/hamburgermenu.png" alt="" class="hamburger"> </span>
+             <ul class="nav-right dropdown-content">
+               <li><a href="/signup" class="btn-orange btn-small">Signup</a></li>
+               <li><a href="/login" class="btn-normal btn-small">Login</a></li>
+             </ul>
+           </span>
         </div>
       </nav>
 
@@ -44,9 +48,15 @@
              <div class="">
                <h2 class="word-center">Featured</h2>
              </div>
-             <div id="food-data">
+             <span >
+               <div id="food-data">
 
-             </div>
+               </div>
+               <br>
+               <div class="box-col-8">
+                 <button type="button" id="loadMore" class="btn-load-more"> Scroll down to Load More. ☺️ </button>
+               </div>
+             </span>
        </section>
 
     </div>

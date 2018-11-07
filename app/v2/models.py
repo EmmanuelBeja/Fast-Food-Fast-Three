@@ -31,14 +31,14 @@ class User(object):
                 {'username': username, 'userphone': userphone, 'password': password,\
                 'userrole': userRole})
                 self.conn.commit()
-                return jsonify({"message": "Signup Successful"}), 201
-            return jsonify({"message": "Userphone is taken."}), 400
-        return jsonify({"message": "Username is taken."}), 400
+                return jsonify({"message": "Signup Successful", "code": "201"}), 201
+            return jsonify({"message": "Userphone is taken.", "code": "400"}), 400
+        return jsonify({"message": "Username is taken.", "code": "400"}), 400
 
     def login(self, username, password):
         """login users"""
         if not self.valid_username(username):
-            return jsonify({"message": "Please register first."}), 401
+            return jsonify({"message": "Please register first.", "code": "401"}), 401
         self.cur.execute("SELECT * FROM tbl_users WHERE username=%(username)s\
         AND password=%(password)s", {'username': username, 'password': password})
         if self.cur.rowcount > 0:
@@ -55,10 +55,10 @@ class User(object):
             VALUES(%(token)s);", {'token': token})
             self.conn.commit()
             mssg = {"message": "You are successfully logged in",
-                    "token": token.decode(), 'userrole': userrole}
+                    "token": token.decode(), 'userrole': userrole, "code": "200"}
             return jsonify(mssg), 200
         return jsonify({
-            "message": "Wrong username or password"}), 403
+            "message": "Wrong username or password", "code": "403"}), 403
 
     def get_specific_user(self, id):
         """get specific user """
@@ -73,8 +73,8 @@ class User(object):
                 'userPhone': rows[2]})
             return jsonify({
                 "message": "Successful. User Found.",
-                "user": self.userlist}), 200
-        return jsonify({"message": "user does not exist"}), 400
+                "user": self.userlist, "code": "200"}), 200
+        return jsonify({"message": "user does not exist", "code": "400"}), 400
 
     def get_users(self):
         """get all user """
@@ -90,9 +90,9 @@ class User(object):
                 self.result.append(dict(self.userlist))
             return jsonify({
                 "message": "Successful. Users Found",
-                "Users": self.result}), 200
+                "Users": self.result, "code": "200"}), 200
         return jsonify({
-            "message": "No user."}), 400
+            "message": "No user.", "code": "400"}), 400
 
     def update_user(
             self,
@@ -108,8 +108,8 @@ class User(object):
                 "UPDATE tbl_users SET username=%s, userphone=%s, password=%s\
             WHERE userid=%s", (username, userphone, password, userid))
             self.conn.commit()
-            return jsonify({"message": "Update Successful"}), 200
-        return jsonify({"message": "No user."}), 400
+            return jsonify({"message": "Update Successful", "code": "200"}), 200
+        return jsonify({"message": "No user.", "code": "400"}), 400
 
     def delete_user(self, id):
         """ delete User """
@@ -121,8 +121,8 @@ class User(object):
                 "DELETE FROM tbl_users WHERE userid=%(userid)s", {
                     'userid': id})
             self.conn.commit()
-            return jsonify({"message": "Delete Successful."}), 201
-        return jsonify({"message": "No user."}), 400
+            return jsonify({"message": "Delete Successful.", "code": "201"}), 201
+        return jsonify({"message": "No user.", "code": "400"}), 400
 
     def valid_username(self, username):
         """check if username exist"""
@@ -196,7 +196,7 @@ class Order(object):
                         'client_id': client_id})
                 self.conn.commit()
 
-        return jsonify({"message": "Successful. Order created."}), 201
+        return jsonify({"message": "Successful. Order created.", "code": "201"}), 201
 
 
     def get_orders(self):
@@ -230,9 +230,9 @@ class Order(object):
                 self.result.append(dict(self.orderlist))
             return jsonify({
                 "message": "Successful. Orders Found.",
-                "Orders": self.result, "status": "Ok"}), 200
+                "Orders": self.result, "code": "201"}), 200
         return jsonify({
-            "message": "No Order.", "status": "Ok"}), 200
+            "message": "No Order.", "code": "201"}), 200
 
     def get_order(self, order_id):
         """ get Order """
@@ -248,9 +248,9 @@ class Order(object):
             self.result.append(dict(self.orderlist))
             return jsonify({
                 "message": "Successful. Order found.",
-                "Orders": self.result}), 200
+                "Orders": self.result, "code": "200"}), 200
         return jsonify({
-            "message": "No Order."}), 400
+            "message": "No Order.", "code": "400"}), 400
 
     def get_user_orders(self, client_id):
         """get orders for specific user"""
@@ -280,10 +280,10 @@ class Order(object):
                 self.result.append(dict(self.orderlist))
             return jsonify({
                 "message": "Successful. User orders found.",
-                "Orders": self.result, "status": "Ok"}), 200
+                "Orders": self.result, "code": "200"}), 200
 
         return jsonify({
-            "message": "No Order.", "status": "Ok"}), 400
+            "message": "No Order.", "code": "400"}), 400
 
 
     def add_to_cart(self, food_id, client_id):
@@ -322,7 +322,7 @@ class Order(object):
                              'price': price, 'quantity': quantity, 'total': price})
             self.conn.commit()
 
-        return jsonify({"message": "Added to cart.", "status": "Ok"}), 201
+        return jsonify({"message": "Added to cart.", "code": "201"}), 201
 
     def cart_cancel(self, client_id):
         """cancel order"""
@@ -330,7 +330,7 @@ class Order(object):
             "DELETE FROM tbl_order_cache WHERE client_id=%(client_id)s", {
                 'client_id': client_id})
         self.conn.commit()
-        return jsonify({"message": "Order Canceled."}), 200
+        return jsonify({"message": "Order Canceled.", "code": "200"}), 200
 
     def cart_quantity(self, client_id):
         """get quantity added to cart"""
@@ -345,7 +345,8 @@ class Order(object):
                 total = int(total)+int(order[5])
                 totalprice = int(totalprice)+int(order[6])
 
-        return jsonify({'Cart': total, 'totalprice': totalprice, 'message': 'Success'}), 200
+        return jsonify({'Cart': total, 'totalprice': totalprice,\
+        'message': 'Success', "code": "200"}), 200
 
 
     def cart_details(self, client_id):
@@ -370,7 +371,8 @@ class Order(object):
                     })
                 cart.append(dict(cartlist))
 
-        return jsonify({'Cart': cart, 'totalprice': totalprice, 'message': 'Success'}), 200
+        return jsonify({'Cart': cart, 'totalprice': totalprice,\
+        'message': 'Success', "code": "200"}), 200
 
 
     def update_order(
@@ -393,8 +395,8 @@ class Order(object):
                 'order_status': rows[5]})
             return jsonify({
                 "message": "Update Successful.",
-                "Order": self.orderlist}), 201
-        return jsonify({"message": "No Order."}), 400
+                "Order": self.orderlist, "code": "201"}), 201
+        return jsonify({"message": "No Order.", "code": "400"}), 400
 
     def delete_order(self, order_id):
         """ delete Order """
@@ -406,9 +408,9 @@ class Order(object):
                 "DELETE FROM tbl_orders WHERE order_id=%(order_id)s", {
                     'order_id': order_id})
             self.conn.commit()
-            return jsonify({"message": "Delete Successful."}), 201
+            return jsonify({"message": "Delete Successful.", "code": "201"}), 201
         else:
-            return jsonify({"message": "No Order."}), 400
+            return jsonify({"message": "No Order.", "code": "400"}), 400
 
     def check_food_availability(self, food_id):
         """check if food is available in menu"""
@@ -433,7 +435,7 @@ class Food(object):
         self.cur.execute("SELECT * FROM tbl_foods WHERE food_name=%(food_name)s",
                          {'food_name': food_name})
         if self.cur.rowcount > 0:
-            return jsonify({"message": "Ooops! Food already exists."}), 400
+            return jsonify({"message": "Ooops! Food already exists.", "code": "400"}), 400
         else:
             self.cur.execute(
                 "INSERT INTO  tbl_foods(food_name, food_price, food_image)\
@@ -441,7 +443,7 @@ class Food(object):
                 'food_name': food_name, 'food_price': food_price,\
                     'food_image': food_image})
             self.conn.commit()
-            return jsonify({"message": "Successful. Food Created"}), 201
+            return jsonify({"message": "Successful. Food Created", "code": "201"}), 201
 
     def get_foods(self):
         """ get all Foods """
@@ -458,9 +460,9 @@ class Food(object):
                 self.result.append(dict(self.foodlist))
             return jsonify({
                 "message": "Successful. Food Found",
-                "Foods": self.result, "status": "Ok"}), 200
+                "Foods": self.result, "code": "200"}), 200
         return jsonify({
-            "message": "No Food.", "status": "Ok"}), 200
+            "message": "No Food.", "code": "200"}), 200
 
     def update_food(self, food_id, food_name, food_price, food_image):
         """ update Food """
@@ -472,8 +474,8 @@ class Food(object):
                 "UPDATE tbl_foods SET food_name=%s, food_price=%s, food_image=%s\
             WHERE food_id=%s", (food_name, food_price, food_image, food_id))
             self.conn.commit()
-            return jsonify({"message": "Update Successful", "status": "Ok"}), 201
-        return jsonify({"message": "No Food.", "status": "Ok"}), 400
+            return jsonify({"message": "Update Successful", "code": "201"}), 201
+        return jsonify({"message": "No Food.", "code": "400"}), 400
 
     def get_food(self, food_id):
         """ get specific Food """
@@ -488,9 +490,9 @@ class Food(object):
                 'food_image': rows[3]})
             return jsonify({
                 "message": "Successful. Food Found",
-                "Foods": self.foodlist, "status": "Ok"}), 200
+                "Foods": self.foodlist, "code": "200"}), 200
         return jsonify({
-            "message": "No Food.", "status": "Ok"}), 400
+            "message": "No Food.", "code": "400"}), 400
 
     def delete_food(self, food_id):
         """ delete Food """
@@ -503,5 +505,5 @@ class Food(object):
                     'food_id': food_id})
             self.conn.commit()
             return jsonify({
-                "message": "Delete Successful.", "status": "Ok"}), 201
-        return jsonify({"message": "No Food.", "status": "Ok"}), 400
+                "message": "Delete Successful.", "code": "201"}), 201
+        return jsonify({"message": "No Food.", "code": "400"}), 400

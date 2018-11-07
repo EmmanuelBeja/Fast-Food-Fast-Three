@@ -1,20 +1,19 @@
-is_admin_logged_in = () => {
- //check if token was created & user is admin
- if(!window.sessionStorage.getItem('token')){
-   location.replace("/");
+is_logged_in = () => {
+ //check role
+ if( sessionStorage.getItem('token')!= null){
+   let token = sessionStorage.getItem('token');
+   return token;
  }else {
-   //check role
-   userrole = window.sessionStorage.getItem('userrole');
-   if (userrole!='admin') {
-     location.replace("/menu");
-   }
-   token = window.sessionStorage.getItem('token');
-   return "logged in";
+   location.replace('/')
  }
 }
 
-all_orders = () => {
+
+all_orders = token => {
   //fetch cart details
+  if (token == undefined ) {
+    token = is_logged_in();
+  }
   return fetch('/v2/orders/', {
     mode: 'cors',
     crossdomain: true,
@@ -26,15 +25,30 @@ all_orders = () => {
     orderdata = document.getElementById('orderdata');
     if (orderdata != null) {
       order.forEach(function(orderitem){
-        orderdata.innerHTML += '<div class="list-item"><div class="box-col-8"><b>'+orderitem.food_name+'</b> | Price: Ksh.'+orderitem.food_price+' | Qty: '+orderitem.quantity+' | Status: '+orderitem.status+' | Date: '+orderitem.createddate+'<div class="box-col-8"><img src="static/img/location.png" class="location-icon" alt="">'+orderitem.client_adress+'. | Phone : '+orderitem.client_phone+' | By<i> '+orderitem.client_name+'</i>  <button type="button" class="btn-lightblue btn-small" id="'+orderitem.order_id+'" onclick="accepted(this.id)" name="button"> Accept</button><button type="button" class="btn-maroon btn-small" id="'+orderitem.order_id+'" onclick="declined(this.id)" name="button"> Decline</button><button type="button" class="btn-green btn-small" id="'+orderitem.order_id+'" onclick="completed(this.id)" name="button">Complete</button></div></div></div>';
+        orderdata.innerHTML += '<tr>'+
+           '<td>'+orderitem.client_name+'</td>'+
+           '<td>'+orderitem.client_phone+'</td>'+
+           '<td><img src="static/img/location.png" class="location-icon" alt="">'+orderitem.client_adress+'</td>'+
+           '<td>'+orderitem.food_name+'</td>'+
+           '<td>Ksh.'+orderitem.food_price+'</td>'+
+           '<td>'+orderitem.quantity+'</td>'+
+           '<td>'+orderitem.createddate+'</td>'+
+           '<td>'+orderitem.status+'</td>'+
+           '<td><button type="button" class="btn-lightblue btn-small" id="'+orderitem.order_id+'" onclick="accepted(this.id)" name="button"> Accept</button>'+
+           '<button type="button" class="btn-maroon btn-small" id="'+orderitem.order_id+'" onclick="declined(this.id)" name="button"> Decline</button>'+
+           '<button type="button" class="btn-green btn-small" id="'+orderitem.order_id+'" onclick="completed(this.id)" name="button">Complete</button></td>'+
+         '</tr>';
       });
     }
     stat = data.status;
   }).then(status => stat);
 }
 
-accepted = order_id => {
+accepted = (order_id, token) => {
   status = 'accepted';
+  if (token == undefined ) {
+    token = is_logged_in();
+  }
   return fetch('/v2/orders/'+order_id, {
     method: 'PUT',
     body: JSON.stringify({
@@ -57,8 +71,11 @@ accepted = order_id => {
 }
 
 
-declined = order_id => {
+declined = (order_id, token) => {
   status = 'declined';
+  if (token == undefined ) {
+    token = is_logged_in();
+  }
   return fetch('/v2/orders/'+order_id, {
     method: 'PUT',
     body: JSON.stringify({
@@ -80,8 +97,11 @@ declined = order_id => {
   }).then(message => res)
 }
 
-completed = order_id => {
+completed = (order_id, token) => {
   status = 'completed';
+  if (token == undefined ) {
+    token = is_logged_in();
+  }
   return fetch('/v2/orders/'+order_id, {
     method: 'PUT',
     body: JSON.stringify({

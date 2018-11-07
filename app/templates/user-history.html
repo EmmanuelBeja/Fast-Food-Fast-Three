@@ -15,16 +15,17 @@
       <nav class="navbar-default nav-top">
         <div class="nav-container">
           <a class="navbar-brand" href="/">Fast Food Fast</a>
-
-          <ul class="nav-right">
-            <li class="navbar-brand-responsive"> <a href="/">Fast Food Fast</a></li>
-            <li><a href="javascript:;" onclick="logout()" class="btn-normal btn-small">Logout</a></li>
-            <li><a href="/profile" > <img src="{{ url_for('static', filename='img/avatar.png') }}" class="nav-img-icons user-avatar" alt=""> </a></li>
-            <li><a href="/order" > <span class="cart-items" id="cart"></span> <img src="{{ url_for('static', filename='img/carticon.png') }}" class="nav-img-icons" alt=""> </a></li>
-            <li><a href="/order">Ksh.<span id="cart_total_price"></span> </a></li>
-            <li><a href="/history" class="btn-normal btn-small">History</a></li>
-            <li><a href="/menu" class="btn-normal btn-small">Menu</a></li>
-          </ul>
+           <span class="dropdown">
+             <span> <img src="static/img/hamburgermenu.png" alt="" class="hamburger"> </span>
+             <ul class="nav-right dropdown-content">
+               <li><a href="javascript:;" onclick="logout()" class="btn-normal btn-small">Logout</a></li>
+               <li><a href="/profile" > <img src="{{ url_for('static', filename='img/avatar.png') }}" class="nav-img-icons user-avatar" alt=""> </a></li>
+               <li><a href="/order" > <span class="cart-items" id="cart"></span> <img src="{{ url_for('static', filename='img/carticon.png') }}" class="nav-img-icons" alt=""> </a></li>
+               <li><a href="/order">Ksh.<span id="cart_total_price"></span> </a></li>
+               <li><a href="/history" class="btn-normal btn-small">History</a></li>
+               <li><a href="/menu" class="btn-normal btn-small">Menu</a></li>
+             </ul>
+           </span>
         </div>
       </nav>
 
@@ -35,8 +36,20 @@
 
              <div class="box-col-8">
                <div class="panel">
-                 <div class="" id="historydata">
+                 <div class="table-wrapper">
+                   <table id="table">
+                    <tr>
+                      <th>Food Name</th>
+                      <th>Price</th>
+                      <th>Quantity</th>
+                      <th>Date</th>
+                      <th>Status</th>
+                    </tr>
 
+                    <tbody id="historydata">
+
+                    </tbody>
+                  </table>
 
                  </div>
                </div>
@@ -53,9 +66,9 @@
       © Copyright. All Rights Reserved
   </footer>
   <!-- footer end -->
+  <script src="static/js/cart.js" charset="utf-8"></script>
   <script src="static/js/user-history.js" charset="utf-8"></script>
   <script type="text/javascript">
-  is_logged_in();
   cart();
   order_history();
   </script>
