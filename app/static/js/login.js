@@ -19,10 +19,11 @@ login = (username, password) => {
   .then(data => {
     const message = document.getElementById('message');
     if (message != null) {
+      let userrole = data.userrole;
       message.innerHTML = data.message;
       message.classList.add("message");
       redirect = () => {
-        if(data.message=='You are successfully logged in') {
+        if(data.code=='200') {
           if(userrole=='admin'){
             location.replace("/a-home");
           }else{

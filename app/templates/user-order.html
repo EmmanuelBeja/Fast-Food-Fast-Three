@@ -15,16 +15,17 @@
       <nav class="navbar-default nav-top">
         <div class="nav-container">
           <a class="navbar-brand" href="/">Fast Food Fast</a>
-
-          <ul class="nav-right">
-            <li class="navbar-brand-responsive"> <a href="/">Fast Food Fast</a></li>
-            <li><a href="javascript:;" onclick="logout()" class="btn-normal btn-small">Logout</a></li>
-            <li><a href="/profile" > <img src="{{ url_for('static', filename='img/avatar.png') }}" class="nav-img-icons user-avatar" alt=""> </a></li>
-            <li><a href="/order" > <span class="cart-items" id="cart"></span> <img src="{{ url_for('static', filename='img/carticon.png') }}" class="nav-img-icons" alt=""> </a></li>
-            <li><a href="/order">Ksh.<span id="cart_total_price"></span> </a></li>
-            <li><a href="/history" class="btn-normal btn-small">History</a></li>
-            <li><a href="/menu" class="btn-normal btn-small">Menu</a></li>
-          </ul>
+           <span class="dropdown">
+             <span> <img src="static/img/hamburgermenu.png" alt="" class="hamburger"> </span>
+             <ul class="nav-right dropdown-content">
+               <li><a href="javascript:;" onclick="logout()" class="btn-normal btn-small">Logout</a></li>
+               <li><a href="/profile" > <img src="{{ url_for('static', filename='img/avatar.png') }}" class="nav-img-icons user-avatar" alt=""> </a></li>
+               <li><a href="/order" > <span class="cart-items" id="cart"></span> <img src="{{ url_for('static', filename='img/carticon.png') }}" class="nav-img-icons" alt=""> </a></li>
+               <li><a href="/order">Ksh.<span id="cart_total_price"></span> </a></li>
+               <li><a href="/history" class="btn-normal btn-small">History</a></li>
+               <li><a href="/menu" class="btn-normal btn-small">Menu</a></li>
+             </ul>
+           </span>
         </div>
       </nav>
 
@@ -35,10 +36,18 @@
 
              <div class="box-col-5">
                <div class="panel">
-                 <div class="" id="cartdata">
+                 <table id="table">
+                  <tr>
+                    <th>Food Name</th>
+                    <th>Price</th>
+                    <th>Quantity</th>
+                  </tr>
 
+                  <tbody id="cartdata">
 
-                 </div>
+                  </tbody>
+                </table>
+
                  <button type="submit" name="button" onclick="cancel()" class="btn-normal btn-large btn-wide">Cancel.</button>
 
                </div>
@@ -49,8 +58,8 @@
                    <form class="form">
                      <span id="message"></span>
                      <div class="">
-                       <label for="adress">Adress</label>
-                       <input type="text" name="adress" value="" class="input" placeholder="Enter your Adress" id="adress" required>
+                       <label for="adress">Location</label>
+                       <input type="text" name="adress" value="" class="input" placeholder="Enter your Location" id="adress" required />
                      </div>
                      <br>
                      <div class="">
@@ -76,8 +85,8 @@
     let adress = document.getElementById('adress').value;
   </script>
   <script src="static/js/user-order.js" charset="utf-8"></script>
+  <script src="static/js/cart.js" charset="utf-8"></script>
   <script type="text/javascript">
-  is_logged_in();
   cart();
   cart_details();
   </script>

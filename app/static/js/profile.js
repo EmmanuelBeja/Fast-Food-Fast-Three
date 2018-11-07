@@ -1,25 +1,21 @@
-is_admin_logged_in = () => {
- //check if token was created & user is admin
- if(!window.sessionStorage.getItem('token')){
-   location.replace("/");
+is_logged_in = () => {
+ //check role
+ if( sessionStorage.getItem('token')!= null){
+   let token = sessionStorage.getItem('token');
+   return token;
  }else {
-   //check role
-   userrole = window.sessionStorage.getItem('userrole');
-   if (userrole!='admin') {
-     location.replace("/menu");
-   }
-   token = window.sessionStorage.getItem('token');
-   return "logged in";
+   location.replace('/')
  }
 }
 
 
-editprofile = (username, userphone, password,  confirmpass) => {
+editprofile = (username, userphone, password,  confirmpass, token) => {
   if (username == undefined) {
     username = document.getElementById('username').value;
     userphone = document.getElementById('userphone').value;
     password = document.getElementById('password').value;
     confirmpass = document.getElementById('confirmpass').value;
+    token = is_logged_in();
   }
 
   return fetch('/v2/users', {
@@ -40,7 +36,7 @@ editprofile = (username, userphone, password,  confirmpass) => {
     if (message != null) {
       message.innerHTML = data.message;
       message.classList.add("message");
-      setTimeout( () => location.replace("/a-profile") ,3000);
+      setTimeout( () => location.reload() ,3000);
     }
     res = data.message;
   }).then(message => res)

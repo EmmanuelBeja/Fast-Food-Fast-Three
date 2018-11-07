@@ -14,6 +14,36 @@ section{
   height: 480px;
 }
 
+.hide {
+  display: none!important;
+}
+
+
+.table-wrapper{
+  overflow-x:auto;
+}
+
+#table {
+    border-collapse: collapse;
+    width: 100%;
+}
+
+#table td, #table th {
+    border: 1px solid whitesmoke;
+    padding: 5px;
+}
+
+#table tr:nth-child(even){background-color: #f2f2f2;}
+
+#table tr:hover {background-color: #ddd;}
+
+#table th {
+    padding-top: 12px;
+    padding-bottom: 12px;
+    text-align: left;
+    background-color: #9fdbac;
+    color: white;
+}
 
 a{
   text-decoration: none;
@@ -34,15 +64,30 @@ img{
 }
 
 .accepted{
-  color: green!important;
+  padding: 5px;
+  border-radius: 5px;
+  color: white;
+  background-color: #44a044;
+  width: 55%;
+  display: block;
 }
 
 .declined{
-  color: red!important;
+  padding: 5px;
+  border-radius: 5px;
+  color: white;
+  background-color: #b71c1c;
+  width: 55%;
+  display: block;
 }
 
 .completed{
-  color: blue!important;
+  padding: 5px;
+  border-radius: 5px;
+  color: white;
+  background-color: #316f82;
+  width: 55%;
+  display: block;
 }
 
 .message{
@@ -54,47 +99,7 @@ img{
   display: block;
   border-radius: 5px;
 }
-.modal {
-display: block;
-width: 600px;
-max-width: 100%;
-height: 400px;
-max-height: 100%;
-position: fixed;
-z-index: 1000;
-left: 50%;
-top: 50%;
-transform: translate(-50%, -50%);
-background: white;
-box-shadow: 0 0 60px 10px rgba(0, 0, 0, 0.9);
-border-radius: 4px;
-}
-.closed {
-display: none;
-}
 
-.modal-overlay {
-position: fixed;
-top: 0;
-left: 0;
-width: 100%;
-height: 100%;
-z-index: 50;
-background: rgba(0, 0, 0, 0.6);
-}
-.modal-content {
-position: absolute;
-top: 0;
-left: 0;
-width: 90%;
-height: 100%;
-overflow: auto;
-padding: 20px 50px 20px 20px;
-}
-
-.modal h1{
-margin: 5px auto;
-}
 
 /***********************************
 Buttons start
@@ -164,6 +169,20 @@ Buttons start
   text-align: center;
   text-decoration: none;
   width: auto;
+}
+
+.btn-load-more{
+  border: 1px solid #c5baba;
+    border-radius: 5px;
+    background-color: white;
+    color: #c5baba;
+    text-align: center;
+    text-decoration: none;
+    width: 40%;
+    font-size: inherit;
+    margin-left: 30%;
+    margin-bottom: 20px;
+    display: block;
 }
 .btn-small{
 	padding: 4px 10px!important;
@@ -516,10 +535,55 @@ Grid System End
   white-space: nowrap;
   text-overflow: ellipsis;
 }
+
+.hamburger{
+  display: none;
+}
 /***********************************
 Responsive media queries Start
 ***********************************/
 @media (min-width: 551px) and (max-width: 980px){
+  table {
+	  	width: 100%;
+	}
+
+	/* Force table to not be like tables anymore */
+	table, thead, tbody, th, td, tr {
+		display: block;
+	}
+
+	/* Hide table headers (but not display: none;, for accessibility) */
+	thead tr {
+		position: absolute;
+		top: -9999px;
+		left: -9999px;
+	}
+
+	tr { border: 1px solid #ccc; }
+
+	td {
+		/* Behave  like a "row" */
+		border: none;
+		border-bottom: 1px solid #eee;
+		position: relative;
+		padding-left: 50%;
+	}
+
+	td:before {
+		/* Now like a table header */
+		position: absolute;
+		/* Top/left values mimic padding */
+		top: 6px;
+		left: 6px;
+		width: 45%;
+		padding-right: 10px;
+		white-space: nowrap;
+		/* Label the data */
+		content: attr(data-column);
+
+		color: #000;
+		font-weight: bold;
+	}
   .featured{
     background: white;
     padding-top: 20px;
@@ -567,12 +631,6 @@ Responsive media queries Start
 		width: 100%;
 	}
 
-  .navbar-brand{
-    display: none;
-  }
-  .navbar-brand-responsive{
-    display: contents;
-  }
   .nav-container{
     display:block;
     margin: 10px auto;
@@ -586,7 +644,14 @@ Responsive media queries Start
   ul.nav-right li {
     float: none;
     text-align: center;
-    margin: 5px auto;
+  }
+
+  ul.nav-right > li > a {
+    display: block;
+    font-weight: 400;
+    color: #71686873;
+    outline: none;
+    padding: 0px 5px;
   }
 
   .list-item {
@@ -596,9 +661,95 @@ Responsive media queries Start
     margin-bottom: 2px;
     font-size: smaller;
 }
+
+.dropdown {
+  position: relative;
+  display: inline-block;
+  float: right;
+}
+
+.hamburger{
+  display: block;
+  width: 40px;
+  margin-right: 15px;
+}
+
+.dropdown-content {
+  display: none;
+  border-radius: 5px;
+  position: absolute;
+  background-color: white;
+  color: black;
+  min-width: 160px;
+  box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+  padding: 12px 16px;
+  z-index: 1;
+ }
+
+ .dropdown-content .btn-orange {
+    border: 1px solid #ffa50073;
+    border-radius: 5px;
+    color: white;
+    text-align: center;
+    text-decoration: none;
+    width: auto;
+}
+
+ .dropdown:hover .dropdown-content {
+   display: block;
+ }
+
+ .navbar-brand {
+    color: white;
+    font-size: 20px;
+    font-family: "Times New Roman", Times, serif;
+    padding-left: 15px;
+  }
+
 }
 
 @media (min-width: 100px) and (max-width: 550px) {
+  table {
+	  	width: 100%;
+	}
+
+	/* Force table to not be like tables anymore */
+	table, thead, tbody, th, td, tr {
+		display: block;
+	}
+
+	/* Hide table headers (but not display: none;, for accessibility) */
+	thead tr {
+		position: absolute;
+		top: -9999px;
+		left: -9999px;
+	}
+
+	tr { border: 1px solid #ccc; }
+
+	td {
+		/* Behave  like a "row" */
+		border: none;
+		border-bottom: 1px solid #eee;
+		position: relative;
+		padding-left: 50%;
+	}
+
+	td:before {
+		/* Now like a table header */
+		position: absolute;
+		/* Top/left values mimic padding */
+		top: 6px;
+		left: 6px;
+		width: 45%;
+		padding-right: 10px;
+		white-space: nowrap;
+		/* Label the data */
+		content: attr(data-column);
+
+		color: #000;
+		font-weight: bold;
+	}
   .featured{
     background: white;
     padding-top: 20px;
@@ -646,12 +797,6 @@ Responsive media queries Start
 		width: 100%;
 	}
 
-  .navbar-brand{
-    display: none;
-  }
-  .navbar-brand-responsive{
-    display: contents;
-  }
   .nav-container{
     display:block;
     margin: 10px auto;
@@ -665,7 +810,13 @@ Responsive media queries Start
   ul.nav-right li {
     float: none;
     text-align: center;
-    margin: 5px auto;
+  }
+  ul.nav-right > li > a {
+    display: block;
+    font-weight: 400;
+    color: #71686873;
+    outline: none;
+    padding: 0px 5px;
   }
 
   .list-item {
@@ -674,7 +825,51 @@ Responsive media queries Start
     border-bottom: 1px solid whitesmoke;
     margin-bottom: 2px;
     font-size: smaller;
-}
+  }
+
+  .dropdown {
+    position: relative;
+    display: inline-block;
+    float: right;
+  }
+
+  .hamburger{
+    display: block;
+    width: 40px;
+    margin-right: 15px;
+  }
+
+  .dropdown-content {
+    display: none;
+    border-radius: 5px;
+    position: absolute;
+    background-color: white;
+    color: black;
+    min-width: 160px;
+    box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+    padding: 12px 16px;
+    z-index: 1;
+   }
+
+   .dropdown-content .btn-orange {
+      border: 1px solid #ffa50073;
+      border-radius: 5px;
+      color: white;
+      text-align: center;
+      text-decoration: none;
+      width: auto;
+  }
+
+   .dropdown:hover .dropdown-content {
+     display: block;
+   }
+
+   .navbar-brand {
+    color: white;
+    font-size: 20px;
+    font-family: "Times New Roman", Times, serif;
+    padding-left: 15px;
+   }
 }
 
 /***********************************

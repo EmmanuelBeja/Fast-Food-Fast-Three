@@ -1,19 +1,15 @@
-is_admin_logged_in = () => {
- //check if token was created & user is admin
- if(!window.sessionStorage.getItem('token')){
-   location.replace("/");
+is_logged_in = () => {
+ //check role
+ if( sessionStorage.getItem('token')!= null){
+   let token = sessionStorage.getItem('token');
+   return token;
  }else {
-   //check role
-   userrole = window.sessionStorage.getItem('userrole');
-   if (userrole!='admin') {
-     location.replace("/menu");
-   }
-   token = window.sessionStorage.getItem('token');
-   return "logged in";
+   location.replace('/')
  }
 }
 
-admin_menu = () => {
+
+admin_menu = token => {
   //fetch menu
   return fetch('/v2/menu')
   .then(response => response.json())
@@ -22,7 +18,12 @@ admin_menu = () => {
     fooditem = document.getElementById('food-data');
     if (fooditem != null) {
       foods.forEach(food => {
-        fooditem.innerHTML += '<div class="list-item"><div class="box-col-2"><img src="static/img/'+food.food_image+'" class="order-image"  alt=""></div><div class="box-col-6 order-description" >'+food.food_name+' | Price: Ksh.'+food.food_price+'<div class="box-col-8"><a href="javascript:;" id="'+food.food_id+'" onclick="edit_food(this.id)" class="btn-lightblue btn-small" name="button"> Edit</a><button type="button" id="'+food.food_id+'" onclick="delete_food(this.id)" class="btn-maroon btn-small" name="button"> Delete</button></div></div></div>';
+        fooditem.innerHTML += '<tr>'+
+           '<td><img src="static/img/'+food.food_image+'" class="order-image"  alt=""></td>'+
+           '<td>'+food.food_name+'</td>'+
+           '<td>Ksh.'+food.food_price+'</td>'+
+           '<td><a href="javascript:;" id="'+food.food_id+'" onclick="edit_food(this.id)" class="btn-lightblue btn-small" name="button"> Edit</a><button type="button" id="'+food.food_id+'" onclick="delete_food(this.id)" class="btn-maroon btn-small" name="button"> Delete</button></td>'+
+           '</tr>';
       });
     }
     stat = data.status;
@@ -30,12 +31,14 @@ admin_menu = () => {
 }
 
 //add food
-addfood = (food_name, food_price, food_image) => {
-  if (food_name == undefined) {
+addfood = (food_name, food_price, food_image, token) => {
+  if (food_name == undefined || food_name == " ") {
     food_name = document.getElementById('food_name').value;
     food_price = document.getElementById('food_price').value;
     food_image = food_name+'.jpg';
+    token = is_logged_in();
   }
+
   return fetch('/v2/menu', {
     method: 'POST',
     body: JSON.stringify({
@@ -45,7 +48,7 @@ addfood = (food_name, food_price, food_image) => {
     }),
     mode: 'cors',
     crossdomain: true,
-    headers: { 'Content-Type': 'application/json; charset=utf-8', 'Authorization': 'Bearer '+token }
+    headers: { 'Content-Type': 'application/json; charset=utf-8', 'Authorization': 'Bearer '+ token }
   })
   .then(response => response.json())
   .then(data => {
@@ -66,7 +69,10 @@ edit_food = food_id => {
 }
 
 //delete food
-delete_food = food_id => {
+delete_food = (food_id, token) => {
+  if (token == undefined ) {
+    token = is_logged_in();
+  }
   return fetch('/v2/food/'+food_id, {
     method: 'DELETE',
     mode: 'cors',
@@ -84,4 +90,3 @@ delete_food = food_id => {
     stat = data.status;
   }).then(status => stat);
 }
-//Ok
