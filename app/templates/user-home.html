@@ -33,12 +33,17 @@
              <div class="">
                <h2 class="word-center"> Menu</h2>
              </div>
+             <input type="text" name="" id="search-input" onkeyup="searchfood()" class="input search" placeholder="Search food..." value="">
+             <img src="static/img/loading.gif" alt="" class="search-loader" style="display:none;" id="search-loader">
+             <span id="searchResult"></span>
+             <span id="message"></span>
+             <br>
 
              <div id="food-data">
 
              </div>
              <div class="box-col-8">
-               <button type="button" id="loadMore" class="btn-load-more"> Scroll down to Load More. ☺️ </button>
+               <button type="button" id="loadMore" class="btn-load-more"> Scroll down to Load More.</button>
              </div>
 
        </section>
