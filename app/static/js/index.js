@@ -1,5 +1,4 @@
 
-
 menu = () => {
   //fetch menu
   return fetch('/v2/menu')
